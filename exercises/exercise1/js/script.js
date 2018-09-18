@@ -4,7 +4,7 @@
 // It moves three pictures around on the canvas.
 // One moves linearly down the screen.
 // One moves linearly from right to left.
-// One moves toward the mouse cursor.
+// Two move toward the mouse cursor, at different speeds.
 // One is kept at the mouse cursor position.
 
 
@@ -38,16 +38,26 @@ var grandpaImageY;
 var grandpaImageWdth;
 var grandpaImageHght;
 
+//The image of a burrito
+var burritoImage;
+//The current position of the burrito image
+var burritoImageX;
+var burritoImageY;
+//The size of the burrito image
+var burritoImageWdth;
+var burritoImageHgth;
+
 
 // preload()
 //
-// Load the four images we're using before the program starts
+// Load the five images we're using before the program starts
 
 function preload() {
   clownImage = loadImage("assets/images/clown.png");
   feltTextureImage = loadImage("assets/images/black-felt-texture.png");
   thumbUpImage = loadImage("assets/images/thumbs-up.png");
   grandpaImage = loadImage("assets/images/white_grandpa.png");
+  burritoImage = loadImage("assets/images/burrito.png");
 }
 
 
@@ -83,6 +93,14 @@ function setup() {
   thumbUpImageWdth = width/10;
   thumbUpImageHght = height/10;
 
+  //Start the burrito image at the centre of the canvas
+  burritoImageX = width/2;
+  burritoImageY = height/2;
+
+  //Set the size of the burrito image
+  burritoImageWdth = width/8;
+  burritoImageHght = height/8;
+
   // We'll use imageMode CENTER for this script
   imageMode(CENTER);
 }
@@ -92,6 +110,9 @@ function setup() {
 //
 // Moves the felt image linearly
 // Moves the clown face toward the current mouse location
+// Moves the thumbs up from left to right
+// Sets the grandpa image on the mouse position
+// Moves the burrito images towards the current mouse location
 
 function draw() {
 
@@ -125,4 +146,16 @@ function draw() {
 
   //Display the grandpa image
   image(grandpaImage,grandpaImageX,grandpaImageY,grandpaImageWdth,grandpaImageHght);
+
+  // Move the burrito by moving it 1/20th of its current distance from the mouse
+
+  // Calculate the distance in X and in Y
+  xDistance = mouseX - burritoImageX;
+  yDistance = mouseY - burritoImageY;
+  // Add 1/20th of the x and y distance to the burrito's current (x,y) location
+  burritoImageX += xDistance/20;
+  burritoImageY += yDistance/20;
+
+  //Display the burrito image
+  image(burritoImage,burritoImageX, burritoImageY, burritoImageWdth, burritoImageHght);
 }
