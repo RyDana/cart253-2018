@@ -1,9 +1,9 @@
 // Exercise 1 - Moving pictures
-// Pippin Barr
+// Dana Ryashy
 //
-// Starter code for exercise 1.
-// It moves two pictures around on the canvas.
+// It moves three pictures around on the canvas.
 // One moves linearly down the screen.
+// One moves linearly from right to left.
 // One moves toward the mouse cursor.
 
 
@@ -19,6 +19,15 @@ var feltTextureImage;
 var feltTextureImageX;
 var feltTextureImageY;
 
+// The image of a thumb up emoji
+var thumbUpImage;
+// The current position of the thumb up images
+var thumbUpImageX;
+var thumbUpImageY;
+// The size of the thumb up image
+var thumbUpImageWdth;
+var thumbUpImageHght;
+
 
 // preload()
 //
@@ -27,6 +36,7 @@ var feltTextureImageY;
 function preload() {
   clownImage = loadImage("assets/images/clown.png");
   feltTextureImage = loadImage("assets/images/black-felt-texture.png");
+  thumbUpImage = loadImage("assets/images/thumbs-up.png");
 }
 
 
@@ -46,6 +56,15 @@ function setup() {
   feltTextureImageX = width/2;
   feltTextureImageY = 0 - feltTextureImage.height/2;
 
+  //Start the thumb up image at the left of the canvas,
+  // off screen and centered vertically
+  thumbUpImageX = 0;
+  thumbUpImageY = height/2;
+
+  //Set the size of the thumb up image
+  thumbUpImageWdth = width/10;
+  thumbUpImageHght = height/10;
+
   // We'll use imageMode CENTER for this script
   imageMode(CENTER);
 }
@@ -63,6 +82,12 @@ function draw() {
 
   // Display the felt image
   image(feltTextureImage,feltTextureImageX,feltTextureImageY);
+
+  //Move the thumbs up image to the right by increasing the x position
+  thumbUpImageX += 1;
+
+  // Display the thumbs up image
+  image(thumbUpImage,thumbUpImageX, thumbUpImageY, thumbUpImageWdth, thumbUpImageHght);
 
   // Move the clown by moving it 1/10th of its current distance from the mouse
 
