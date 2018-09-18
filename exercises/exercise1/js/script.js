@@ -5,6 +5,7 @@
 // One moves linearly down the screen.
 // One moves linearly from right to left.
 // One moves toward the mouse cursor.
+// One is kept at the mouse cursor position.
 
 
 // The image of a clown face
@@ -28,15 +29,25 @@ var thumbUpImageY;
 var thumbUpImageWdth;
 var thumbUpImageHght;
 
+//The image of a grandpa emoji
+var grandpaImage;
+//The curent position of the grandpa images
+var grandpaImageX;
+var grandpaImageY;
+//The size of the grandpa image
+var grandpaImageWdth;
+var grandpaImageHght;
+
 
 // preload()
 //
-// Load the two images we're using before the program starts
+// Load the four images we're using before the program starts
 
 function preload() {
   clownImage = loadImage("assets/images/clown.png");
   feltTextureImage = loadImage("assets/images/black-felt-texture.png");
   thumbUpImage = loadImage("assets/images/thumbs-up.png");
+  grandpaImage = loadImage("assets/images/white_grandpa.png");
 }
 
 
@@ -52,12 +63,19 @@ function setup() {
   clownImageX = width/2;
   clownImageY = height/2;
 
+  // Start the grandpa image at the centre of the canvas
+  grandpaImageX = width/2;
+  grandpaImageY = height/2;
+
+  //Set the size of the grandpa image
+  grandpaImageWdth = width/20;
+  grandpaImageHght = height/20;
+
   // Start the felt image perfectly off screen above the canvas
   feltTextureImageX = width/2;
   feltTextureImageY = 0 - feltTextureImage.height/2;
 
-  //Start the thumb up image at the left of the canvas,
-  // off screen and centered vertically
+  //Start the thumb up image at the left of the canvas, centered vertically
   thumbUpImageX = 0;
   thumbUpImageY = height/2;
 
@@ -100,4 +118,11 @@ function draw() {
 
   // Display the clown image
   image(clownImage,clownImageX,clownImageY);
+
+  //Position the grandpa image so that it follows the mouse
+  grandpaImageX = mouseX;
+  grandpaImageY = mouseY;
+
+  //Display the grandpa image
+  image(grandpaImage,grandpaImageX,grandpaImageY,grandpaImageWdth,grandpaImageHght);
 }
