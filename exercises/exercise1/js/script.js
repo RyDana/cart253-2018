@@ -1,11 +1,12 @@
 // Exercise 1 - Moving pictures
 // Dana Ryashy
 //
-// It moves three pictures around on the canvas.
+// It moves five pictures around on the canvas.
 // One moves linearly down the screen.
 // One moves linearly from right to left.
 // Two move toward the mouse cursor, at different speeds.
 // One is kept at the mouse cursor position.
+// One moves in a sine movement.
 
 
 // The image of a clown face
@@ -45,7 +46,16 @@ var burritoImageX;
 var burritoImageY;
 //The size of the burrito image
 var burritoImageWdth;
-var burritoImageHgth;
+var burritoImageHght;
+
+//The image of a heart
+var heartImage;
+//The current position of the heart image
+var heartImageX;
+var heartImageY;
+//The size of the heart image
+var heartImageWdth;
+var heartImageHght;
 
 
 // preload()
@@ -58,6 +68,7 @@ function preload() {
   thumbUpImage = loadImage("assets/images/thumbs-up.png");
   grandpaImage = loadImage("assets/images/white_grandpa.png");
   burritoImage = loadImage("assets/images/burrito.png");
+  heartImage = loadImage("assets/images/sparkly-heart.png");
 }
 
 
@@ -101,6 +112,13 @@ function setup() {
   burritoImageWdth = width/8;
   burritoImageHght = height/8;
 
+  //Start the heart image at the left of the canvas
+  heartImageX = 0;
+
+  //Set the size of the heart image
+  heartImageWdth = width/4;
+  heartImageHght = height/4;
+
   // We'll use imageMode CENTER for this script
   imageMode(CENTER);
 }
@@ -113,6 +131,7 @@ function setup() {
 // Moves the thumbs up from left to right
 // Sets the grandpa image on the mouse position
 // Moves the burrito images towards the current mouse location
+// Moves the heart image in a sine wave, from left to right
 
 function draw() {
 
@@ -158,4 +177,12 @@ function draw() {
 
   //Display the burrito image
   image(burritoImage,burritoImageX, burritoImageY, burritoImageWdth, burritoImageHght);
+
+  //Move the heart image to the right by increasing the x position
+  heartImageX += 1;
+  //Move the hearth image up and down according to the sine equation
+  heartImageY = 10*sin(heartImageX/10) + 200;
+
+  //Display the heart image
+  image(heartImage,heartImageX,heartImageY,heartImageWdth,heartImageHght);
 }
