@@ -84,7 +84,7 @@ function preload() {
 // Make the canvas, initialise pi variables, position the avatar and enemy
 function setup() {
   // Create our playing area
-  createCanvas(500, 500);
+  createCanvas(window.innerWidth , window.innerHeight);
 
   //Initialize the pi variables
   pi = -PI;
