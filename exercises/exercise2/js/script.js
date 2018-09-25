@@ -22,6 +22,10 @@ var avatarVY = 0;
 //How much faster or slower the avatar will get after a dodge
 var avatarSpeedChange;
 
+//Offset of avatar's position from the mouse
+//if a finger is used to play on a touch screen
+var avatarMouseOffset = 50;
+
 // The position and size of the enemy
 var enemyX;
 var enemyY;
@@ -126,29 +130,38 @@ function draw() {
   avatarVX = 0;
   avatarVY = 0;
 
-  // Check which keys are down and set the avatar's velocity based on its
-  // speed appropriately
+  //Check if player decides to play with mouse (or touch) or keyboard
+  if (mouseIsPressed) {
+    avatarX = mouseX - avatarMouseOffset;
+    avatarY = mouseY - avatarMouseOffset;
+  } else {
+    // Check which keys are down and set the avatar's velocity based on its
+    // speed appropriately
 
-  // Left and right
-  if (keyIsDown(LEFT_ARROW)) {
-    avatarVX = -avatarSpeed;
-  }
-  else if (keyIsDown(RIGHT_ARROW)) {
-    avatarVX = avatarSpeed;
+    // Left and right
+    if (keyIsDown(LEFT_ARROW)) {
+      avatarVX = -avatarSpeed;
+    }
+    else if (keyIsDown(RIGHT_ARROW)) {
+      avatarVX = avatarSpeed;
+    }
+
+    // Up and down (separate if-statements so you can move vertically and
+    // horizontally at the same time)
+    if (keyIsDown(UP_ARROW)) {
+      avatarVY = -avatarSpeed;
+    }
+    else if (keyIsDown(DOWN_ARROW)) {
+      avatarVY = avatarSpeed;
+    }
+
+    // Move the avatar according to its calculated velocity
+    avatarX = avatarX + avatarVX;
+    avatarY = avatarY + avatarVY;
+
   }
 
-  // Up and down (separate if-statements so you can move vertically and
-  // horizontally at the same time)
-  if (keyIsDown(UP_ARROW)) {
-    avatarVY = -avatarSpeed;
-  }
-  else if (keyIsDown(DOWN_ARROW)) {
-    avatarVY = avatarSpeed;
-  }
 
-  // Move the avatar according to its calculated velocity
-  avatarX = avatarX + avatarVX;
-  avatarY = avatarY + avatarVY;
 
   // The enemy always moves at enemySpeed (which increases)
   enemyVX = enemySpeed;
