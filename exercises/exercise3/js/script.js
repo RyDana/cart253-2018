@@ -1,6 +1,6 @@
 /******************************************************************************
-Where's Sausage Dog?
-by Pippin Barr
+Exercise 3 - Where's Sausage Dog? Plus
+by Dana Ryashy
 
 An algorithmic version of a Where's Wally searching game where you
 need to click on the sausage dog you're searching for in amongst all
@@ -14,6 +14,12 @@ https://creativenerds.co.uk/freebies/80-free-wildlife-icons-the-best-ever-animal
 var targetX;
 var targetY;
 var targetImage;
+
+//Reference image for the sausage dog
+var referenceX;
+var referenceY;
+//Margin between the sausage dog image and edge of the rectangle it's in
+var referenceMargin = 50;
 
 // The ten decoy images
 var decoyImage1;
@@ -60,6 +66,7 @@ function setup() {
   createCanvas(windowWidth,windowHeight);
   background("#ffff00");
   imageMode(CENTER);
+  rectMode(CENTER);
 
   // Use a for loop to draw as many decoys as we need
   for (var i = 0; i < numDecoys; i++) {
@@ -108,6 +115,18 @@ function setup() {
   targetY = random(0,height);
   // And draw it (this means it will always be on top)
   image(targetImage,targetX,targetY);
+
+  //Set a location for the reference image
+  referenceX = width - targetImage.width/2 - referenceMargin;
+  referenceY = targetImage.height/2 + referenceMargin;
+  //Draw a white background rectangle for the reference image
+  fill(255);
+  noStroke();
+  rect(referenceX, referenceY, targetImage.width + 2*referenceMargin ,
+    targetImage.height+ 2*referenceMargin);
+  //Draw the reference image of the sausage dog on top of everything
+  image(targetImage, referenceX, referenceY);
+
 }
 
 function draw() {
