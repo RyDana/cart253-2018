@@ -19,7 +19,11 @@ var targetImage;
 var referenceX;
 var referenceY;
 //Margin between the sausage dog image and edge of the rectangle it's in
-var referenceMargin = 50;
+var referenceMargin = 40;
+//Corner rounding value of the background rectangle of the reference image
+var roundedCorner = 10;
+//Caption serving as the instruction for the game
+var captionText = "WHERE AM I?";
 
 // The ten decoy images
 var decoyImage1;
@@ -121,20 +125,29 @@ function setup() {
   referenceY = targetImage.height/2 + referenceMargin;
   //Draw a white background rectangle for the reference image
   fill(255);
-  noStroke();
+  stroke(24, 48, 68);
+  strokeWeight(5);
   rect(referenceX, referenceY, targetImage.width + 2*referenceMargin ,
-    targetImage.height+ 2*referenceMargin);
+    targetImage.height+ 2*referenceMargin, roundedCorner);
   //Draw the reference image of the sausage dog on top of everything
   image(targetImage, referenceX, referenceY);
+  //Add the caption on top of the image
+  //Prepare the typography
+  textFont("Helvetica");
+  textStyle(BOLD);
+  textSize(24);
+  textAlign(CENTER,CENTER);
+  noStroke();
+  fill(24, 48, 68);
+  //Display the caption
+  text(captionText, referenceX, referenceMargin);
 
 }
 
 function draw() {
   if (gameOver) {
     // Prepare our typography
-    textFont("Helvetica");
     textSize(128);
-    textAlign(CENTER,CENTER);
     noStroke();
     fill(random(255));
     // Tell them they won!
