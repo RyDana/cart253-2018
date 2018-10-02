@@ -114,12 +114,6 @@ function setup() {
     }
   }
 
-  // Once we've displayed all decoys, we choose a location for the target
-  targetX = random(0,width);
-  targetY = random(0,height);
-  // And draw it (this means it will always be on top)
-  image(targetImage,targetX,targetY);
-
   //Set a location for the reference image
   referenceX = width - targetImage.width/2 - referenceMargin;
   referenceY = targetImage.height/2 + referenceMargin;
@@ -141,6 +135,16 @@ function setup() {
   fill(24, 48, 68);
   //Display the caption
   text(captionText, referenceX, referenceMargin);
+
+  // We choose a location for the target
+  //it should not be behing the reference image's background rectangle
+  do{
+    targetX = random(0,width);
+    targetY = random(0,height);
+  }while(targetX > width - targetImage.width*1.5 - referenceMargin*2 &&
+    targetY < targetImage.height*1.5 + referenceMargin*2);
+  // And draw it (this means it will always be on top)
+  image(targetImage,targetX,targetY);
 
 }
 
