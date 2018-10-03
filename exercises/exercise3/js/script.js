@@ -8,12 +8,31 @@ the visual noise of other animals.
 
 Animal images from:
 https://creativenerds.co.uk/freebies/80-free-wildlife-icons-the-best-ever-animal-icon-set/
+Light beams image from:
+https://www.freeiconspng.com/uploads/light-png-22.png
 ******************************************************************************/
 
-// Position and image of the sausage dog we're searching for
+// Position, size and image of the sausage dog we're searching for
 var targetX;
 var targetY;
+var targetWidth;
+var targetHeight;
 var targetImage;
+
+//Movement variables for the sausage dog once found
+var targetVX;
+var targetVY;
+var targetMaxWidth = 350;
+
+//Light beams image displayed once dog is found
+var beamImage;
+var beamImageHeight = 1;
+var beamImageWidth = 1;
+
+//RGB values for winning text
+var r = 255;
+var g = 0;
+var b = 0;
 
 //Reference image for the sausage dog
 var referenceX;
@@ -24,6 +43,9 @@ var referenceMargin = 40;
 var roundedCorner = 10;
 //Caption serving as the instruction for the game
 var captionText = "WHERE AM I?";
+
+//Winning text displayed once the dog is found
+var winningText = "YOU HAVE WINNED";
 
 // The ten decoy images
 var decoyImage1;
@@ -46,9 +68,10 @@ var gameOver = false;
 
 // preload()
 //
-// Loads the target and decoy images before the program starts
+// Loads the target, decoy and light beam images before the program starts
 function preload() {
   targetImage = loadImage("assets/images/animals-target.png");
+  beamImage = loadImage("assets/images/beams.png");
 
   decoyImage1 = loadImage("assets/images/animals-01.png");
   decoyImage2 = loadImage("assets/images/animals-02.png");
@@ -125,6 +148,7 @@ function setup() {
     targetImage.height+ 2*referenceMargin, roundedCorner);
   //Draw the reference image of the sausage dog on top of everything
   image(targetImage, referenceX, referenceY);
+
   //Add the caption on top of the image
   //Prepare the typography
   textFont("Helvetica");
@@ -146,21 +170,74 @@ function setup() {
   // And draw it (this means it will always be on top)
   image(targetImage,targetX,targetY);
 
+  //Set the target's height and with so it can be changed later
+  targetWidth = targetImage.width;
+  targetHeight = targetImage.height;
+
 }
 
+
+// draw()
+//
+// Performs an animation once the game is won
 function draw() {
   if (gameOver) {
-    // Prepare our typography
+    //Create a new background of the same yellow color than in setup()
+    background("#ffff00");
+
+    //Draws a rotating light beam image
+    push();
+    translate(width*0.5, height*0.5);
+    rotate(frameCount / 50.0);
+    image(beamImage, 0,0, beamImageWidth, beamImageHeight);
+    pop();
+
+    //Increases the size of the light beam image from 1x1 pixels
+    //until it is around its original size
+    if (beamImageWidth < beamImage.width){
+      beamImageWidth+=20;
+      beamImageHeight+=20;
+    }
+
+    //Animation making the found sausage dog come front and center
+
+    //Sets the velocity of the image according to
+    //its distance from the center of the screen
+    targetVX = width/2 - targetX;
+    targetVY = height/2 - targetY;
+    //Moves the position of the sausage dog image
+    targetX += targetVX*0.1;
+    targetY += targetVY*0.1;
+    //Increases the size of the sausage dog image so its around 350px wide
+    if(targetWidth<targetMaxWidth){
+      targetWidth += 4;
+      targetHeight += 4;
+    }
+    //Draws the sausage dog
+    image(targetImage,targetX,targetY,targetWidth, targetHeight);
+
+
+    // Prepare our typography for the winning text
+    // A changing fill
+    fill(r,g,b);
+    if(r == 255 && g < 255 && b == 0){
+      g+=5;
+    }else if (r <= 255 && r > 0 && g == 255 && b == 0){
+      r-=5;
+    }else if (r == 0 && g == 255 && b >= 0 && b < 255){
+      b+=5;
+    }else if (r == 0 && g <= 255 && g > 0 && b == 255){
+      g-=5;
+    }else if (r < 255 && g == 0 && b == 255){
+      r+=5;
+    }else if (r == 255 && g == 0 && b <=255 && b >0){
+      b-=5;
+    }
+    //A big size
     textSize(128);
     noStroke();
-    fill(random(255));
     // Tell them they won!
-    text("YOU WINNED!",width/2,height/2);
-
-    noFill();
-    stroke(random(255));
-    strokeWeight(10);
-    ellipse(targetX,targetY,targetImage.width,targetImage.height);
+    text(winningText,width/2,height/4);
   }
 }
 
