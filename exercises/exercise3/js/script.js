@@ -59,9 +59,11 @@ var decoyImage8;
 var decoyImage9;
 var decoyImage10;
 
-// The number of decoys to show on the screen, randomly
-// chosen from the decoy images
-var numDecoys = 100;
+// The number of decoys to show on the screen
+var numDecoys;
+
+// Image scaling variable, allowing the images to be different sizes every game
+var imageScaling;
 
 // Keep track of whether they've won
 var gameOver = false;
@@ -95,6 +97,16 @@ function setup() {
   imageMode(CENTER);
   rectMode(CENTER);
 
+  //Assign the random number of decoys
+  numDecoys = random(100,200);
+
+  //Assign the image scaling variable at a random value
+  imageScaling = random(0.3, 2);
+
+  //Assign the target's height and with so it can be changed for the winning animation
+  targetWidth = targetImage.width*imageScaling;
+  targetHeight = targetImage.height*imageScaling;
+
   // Use a for loop to draw as many decoys as we need
   for (var i = 0; i < numDecoys; i++) {
     // Choose a random location for this decoy
@@ -106,34 +118,44 @@ function setup() {
     // images, each with a 10% chance of being shown
     // We'll talk more about this nice quality of random soon enough
     if (r < 0.1) {
-      image(decoyImage1,x,y);
+      image(decoyImage1,x,y,
+        decoyImage1.width*imageScaling, decoyImage1.height*imageScaling);
     }
     else if (r < 0.2) {
-      image(decoyImage2,x,y);
+      image(decoyImage2,x,y,
+        decoyImage2.width*imageScaling, decoyImage2.height*imageScaling);
     }
     else if (r < 0.3) {
-      image(decoyImage3,x,y);
+      image(decoyImage3,x,y,
+        decoyImage3.width*imageScaling, decoyImage3.height*imageScaling);
     }
     else if (r < 0.4) {
-      image(decoyImage4,x,y);
+      image(decoyImage4,x,y,
+        decoyImage4.width*imageScaling, decoyImage4.height*imageScaling);
     }
     else if (r < 0.5) {
-      image(decoyImage5,x,y);
+      image(decoyImage5,x,y,
+        decoyImage5.width*imageScaling, decoyImage5.height*imageScaling);
     }
     else if (r < 0.6) {
-      image(decoyImage6,x,y);
+      image(decoyImage6,x,y,
+        decoyImage6.width*imageScaling, decoyImage6.height*imageScaling);
     }
     else if (r < 0.7) {
-      image(decoyImage7,x,y);
+      image(decoyImage7,x,y,
+        decoyImage7.width*imageScaling, decoyImage7.height*imageScaling);
     }
     else if (r < 0.8) {
-      image(decoyImage8,x,y);
+      image(decoyImage8,x,y,
+        decoyImage8.width*imageScaling, decoyImage8.height*imageScaling);
     }
     else if (r < 0.9) {
-      image(decoyImage9,x,y);
+      image(decoyImage9,x,y,
+        decoyImage9.width*imageScaling, decoyImage9.height*imageScaling);
     }
     else if (r < 1.0) {
-      image(decoyImage10,x,y);
+      image(decoyImage10,x,y,
+        decoyImage10.width*imageScaling, decoyImage10.height*imageScaling);
     }
   }
 
@@ -168,11 +190,8 @@ function setup() {
   }while(targetX > width - targetImage.width*1.5 - referenceMargin*2 &&
     targetY < targetImage.height*1.5 + referenceMargin*2);
   // And draw it (this means it will always be on top)
-  image(targetImage,targetX,targetY);
-
-  //Set the target's height and with so it can be changed later
-  targetWidth = targetImage.width;
-  targetHeight = targetImage.height;
+  image(targetImage,targetX,targetY,
+    targetImage.width*imageScaling, targetImage.height*imageScaling);
 
 }
 
