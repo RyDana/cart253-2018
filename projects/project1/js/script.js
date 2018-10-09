@@ -26,13 +26,15 @@ var playerMaxHealth = 255;
 // Player fill color
 var playerFill = 50;
 
-// Prey position, size, velocity
+// Prey position, size, velocity, time
 var preyX;
 var preyY;
 var preyRadius = 25;
 var preyVX;
 var preyVY;
 var preyMaxSpeed = 4;
+var preyTX;
+var preyTY;
 // Prey health
 var preyHealth;
 var preyMaxHealth = 100;
@@ -58,12 +60,14 @@ function setup() {
 
 // setupPrey()
 //
-// Initialises prey's position, velocity, and health
+// Initialises prey's position, velocity, health and Perlin time
 function setupPrey() {
   preyX = width/5;
   preyY = height/2;
   preyVX = -preyMaxSpeed;
   preyVY = preyMaxSpeed;
+  preyTX = random(0,1000);
+  preyTY = random(0,1000);
   preyHealth = preyMaxHealth;
 }
 
@@ -199,17 +203,14 @@ function checkEating() {
 //
 // Moves the prey based on random velocity changes
 function movePrey() {
-  // Change the prey's velocity at random intervals
-  // random() will be < 0.05 5% of the time, so the prey
-  // will change direction on 5% of frames
-  if (random() < 0.05) {
-    // Set velocity based on random values to get a new direction
-    // and speed of movement
-    // Use map() to convert from the 0-1 range of the random() function
-    // to the appropriate range of velocities for the prey
-    preyVX = map(random(),0,1,-preyMaxSpeed,preyMaxSpeed);
-    preyVY = map(random(),0,1,-preyMaxSpeed,preyMaxSpeed);
-  }
+  // Change the prey's velocity using the Perlin noise
+  // Use map() to convert from the 0-1 range of the noise() function
+  // to the appropriate range of velocities for the prey
+  preyVX = map(noise(preyTX),0,1,-preyMaxSpeed,preyMaxSpeed);
+  preyVY = map(noise(preyTY),0,1,-preyMaxSpeed,preyMaxSpeed);
+  //Change time value so the noise value will be different on the next frame
+  preyTX += 0.01;
+  preyTY += 0.01;
 
   // Update prey position based on velocity
   preyX += preyVX;
