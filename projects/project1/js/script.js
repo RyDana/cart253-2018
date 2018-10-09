@@ -49,14 +49,13 @@ var enemyMaxSpeed = 5;
 var enemyFill = 50;
 //Enemy array
 var enemyArray = [];
-//Enemies
-var enemy1;
-var enemy2;
 
 // Amount of health obtained per frame of "eating" the prey
 var eatHealth = 10;
 //Amount of health removed when hitting a competitor
 var hitHealth = 20;
+// Health bar width;
+var healthBarWidth;
 // Number of prey eaten during the game
 var preyEaten = 0;
 
@@ -78,7 +77,7 @@ function Enemy() {
 //
 // Updates enemy position based on velocity,
 // wraps around the edges.
-Enemy.prototype.move = function() {
+Enemy.prototype.moveEnemy = function() {
   // Change the enemy's velocity using the Perlin noise
   // Use map() to convert from the 0-1 range of the noise() function
   // to the appropriate range of velocities for the enemy
@@ -130,7 +129,7 @@ Enemy.prototype.checkHit = function() {
 //draw()
 //
 //Draws enemy
-Enemy.prototype.draw = function() {
+Enemy.prototype.drawEnemy = function() {
     fill(enemyFill);
     rect(this.enemyX,this.enemyY,enemyRadius*2,enemyRadius*2);
 }
@@ -199,14 +198,16 @@ function draw() {
 
     movePlayer();
     movePrey();
+    //Move enemies if there are some
     if (enemyArray.length >0){
       for (i = 0; i <enemyArray.length; i++){
-        enemyArray[i].move();
+        enemyArray[i].moveEnemy();
       }
     }
 
     updateHealth();
     checkEating();
+    //Check if player was hit by each enemy
     if (enemyArray.length >0){
       for (i = 0; i <enemyArray.length; i++){
         enemyArray[i].checkHit();
@@ -215,11 +216,15 @@ function draw() {
 
     drawPrey();
     drawPlayer();
+    //Draw each enemy if there are some
     if (enemyArray.length >0){
       for (i = 0; i <enemyArray.length; i++){
-        enemyArray[i].draw();
+        enemyArray[i].drawEnemy();
       }
     }
+
+    drawHealthBar();
+
   }
   else {
     showGameOver();
@@ -328,6 +333,7 @@ function checkEating() {
       preyHealth = preyMaxHealth;
       // Track how many prey were eaten
       preyEaten++;
+      //Add an enemy to the game
       enemyArray.push(new Enemy());
     }
   }
@@ -380,8 +386,22 @@ function drawPrey() {
 //
 // Draw the player as an ellipse with alpha based on health
 function drawPlayer() {
-  fill(playerFill,playerHealth);
+  fill(153, 153, 255);
   ellipse(playerX,playerY,playerRadius*2);
+}
+
+// drawHealthBar()
+//
+// Draws a health bar at the bottom of the canvas
+function drawHealthBar(){
+  push();
+  rectMode(CORNER);
+  fill(100,100,200);
+  rect(width/4 - 5,height-35,width/2 + 10,30);
+  fill(153, 153, 255);
+  healthBarWidth = map(playerHealth,0,playerMaxHealth, 0, width/2);
+  rect(width/4, height-30,healthBarWidth,20);
+  pop();
 }
 
 // showGameOver()
