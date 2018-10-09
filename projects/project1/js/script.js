@@ -19,10 +19,11 @@ var playerY;
 var playerRadius = 25;
 var playerVX = 0;
 var playerVY = 0;
-var playerMaxSpeed = 2;
+var playerMaxSpeed;
 // Player health
 var playerHealth;
 var playerMaxHealth = 255;
+var playerHealthLoss;
 // Player fill color
 var playerFill = 50;
 
@@ -110,7 +111,21 @@ function draw() {
 // handleInput()
 //
 // Checks arrow keys and adjusts player velocity accordingly
+// Handles the sprinting proprety
 function handleInput() {
+  /////////NEW/////////
+  //Check for sprint or normal speed
+  //Increase maxSpeed and increase the health loss when sprinting
+  if (keyIsDown(SHIFT))
+  {
+    playerMaxSpeed = 5;
+    playerHealthLoss = 2;
+  }else{
+    playerMaxSpeed = 2;
+    playerHealthLoss = 0.5;
+  }
+  /////////END NEW/////////
+
   // Check for horizontal movement
   if (keyIsDown(LEFT_ARROW)) {
     playerVX = -playerMaxSpeed;
@@ -165,7 +180,7 @@ function movePlayer() {
 // Check if the player is dead
 function updateHealth() {
   // Reduce player health, constrain to reasonable range
-  playerHealth = constrain(playerHealth - 0.5,0,playerMaxHealth);
+  playerHealth = constrain(playerHealth - playerHealthLoss,0,playerMaxHealth);
   // Check if the player is dead
   if (playerHealth === 0) {
     // If so, the game is over
@@ -203,6 +218,7 @@ function checkEating() {
 //
 // Moves the prey based on random velocity changes
 function movePrey() {
+  ////////NEW////////
   // Change the prey's velocity using the Perlin noise
   // Use map() to convert from the 0-1 range of the noise() function
   // to the appropriate range of velocities for the prey
@@ -211,6 +227,7 @@ function movePrey() {
   //Change time value so the noise value will be different on the next frame
   preyTX += 0.01;
   preyTY += 0.01;
+  ////////END NEW////////
 
   // Update prey position based on velocity
   preyX += preyVX;
