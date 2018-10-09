@@ -1,7 +1,7 @@
 /******************************************************
 
 Game - Chaser
-Pippin Barr
+Dana Ryashy
 
 A simple game of cat and mouse.
 
@@ -42,20 +42,14 @@ var preyMaxHealth = 100;
 // Prey fill color
 var preyFill = 200;
 
-//Competitor position, size, velocity, Perlin noise's time
-var compX;
-var compY;
-var compRadius = 25;
-var compVX;
-var compVY;
-var compMaxSpeed = 10;
-var compTX;
-var compTY;
-// Prey health
-var compHealth;
-var compMaxHealth = 100;
-// Prey fill color
-var compFill = 100;
+//Enemy constants
+var enemyRadius = 25;
+var enemyMaxSpeed = 5;
+// Enemy fill color
+var enemyFill = 50;
+//Enemies
+var enemy1;
+var enemy2;
 
 // Amount of health obtained per frame of "eating" the prey
 var eatHealth = 10;
@@ -63,6 +57,81 @@ var eatHealth = 10;
 var hitHealth = 20;
 // Number of prey eaten during the game
 var preyEaten = 0;
+
+//Enemy()
+//
+//Constructs the enemy object:
+// initialises position, speed, radius, perlin noise time
+function Enemy() {
+  this.enemyX = random(0,width);
+  this.enemyY = random(0,height);
+  this.enemyRadius = enemyRadius;
+  this.enemyVX = -enemyMaxSpeed;
+  this.enemyVY = enemyMaxSpeed;
+  this.enemyTX = random(0,1000);
+  this.enemyTY = random(0,1000);
+}
+
+// move()
+//
+// Updates enemy position based on velocity,
+// wraps around the edges.
+Enemy.prototype.move = function() {
+  // Change the enemy's velocity using the Perlin noise
+  // Use map() to convert from the 0-1 range of the noise() function
+  // to the appropriate range of velocities for the enemy
+  this.enemyVX = map(noise(this.enemyTX),0,1,-enemyMaxSpeed,enemyMaxSpeed);
+  this.enemyVY = map(noise(this.enemyTY),0,1,-enemyMaxSpeed,enemyMaxSpeed);
+  //Change time value so the noise value will be different on the next frame
+  this.enemyTX += 0.01;
+  this.enemyTY += 0.01;
+
+  // Update enemy position based on velocity
+  this.enemyX += this.enemyVX;
+  this.enemyY += this.enemyVY;
+
+  // Screen wrapping
+  if (this.enemyX < 0) {
+    this.enemyX += width;
+  }
+  else if (this.enemyX > width) {
+    this.enemyX -= width;
+  }
+
+  if (this.enemyY < 0) {
+    this.enemyY += height;
+  }
+  else if (this.enemyY > height) {
+    this.enemyY -= height;
+  }
+}
+
+//checkHit()
+//
+//Checks collision between player and enemy, removes player health
+Enemy.prototype.checkHit = function() {
+  // Get distance of player to enemy
+  var d = dist(playerX,playerY,this.enemyX,this.enemyY);
+  // Check if it's an overlap
+  if (d < playerRadius + enemyRadius) {
+    // Reduce the player health
+    playerHealth = constrain(playerHealth - hitHealth,0,playerMaxHealth);
+
+    // Move the "new" enemy to a random position
+    this.enemyX = random(0,width);
+    this.enemyY = random(0,height);
+    console.log("Enemy died!");
+
+  }
+}
+
+//draw()
+//
+//Draws enemy
+Enemy.prototype.draw = function() {
+    fill(enemyFill);
+    rect(this.enemyX,this.enemyY,enemyRadius*2,enemyRadius*2);
+}
 
 // setup()
 //
@@ -74,8 +143,10 @@ function setup() {
   noStroke();
 
   setupPrey();
-  setupCompetitor();
+  //setupCompetitor();
   setupPlayer();
+  enemy1 = new Enemy();
+  enemy2 = new Enemy();
 }
 
 // setupPrey()
@@ -117,8 +188,8 @@ function setupPlayer() {
 //
 // While the game is active, checks input
 // updates positions of prey and player,
-// checks health (dying), checks eating (overlaps)
-// displays the two agents.
+// checks health (dying), checks eating (overlaps), checks hits (overlaps)
+// displays the agents.
 // When the game is over, shows the game over screen.
 function draw() {
   background(100,100,200);
@@ -128,15 +199,21 @@ function draw() {
 
     movePlayer();
     movePrey();
-    moveCompetitor();
+    //moveCompetitor();
+    enemy1.move();
+    enemy2.move();
 
     updateHealth();
     checkEating();
-    checkHit();
+    enemy1.checkHit();
+    enemy2.checkHit();
+    //checkHit();
 
     drawPrey();
     drawPlayer();
-    drawCompetitor();
+    enemy1.draw();
+    enemy2.draw();
+    //drawCompetitor();
   }
   else {
     showGameOver();
@@ -249,33 +326,6 @@ function checkEating() {
   }
 }
 
-//checkHit()
-//
-//Checks if the player has hit the competitor and updates health of both
-function checkHit(){
-  // Get distance of player to competitor
-  var d = dist(playerX,playerY,compX,compY);
-  // Check if it's an overlap
-  if (d < playerRadius + compRadius) {
-    // Reduce the player health
-    playerHealth = constrain(playerHealth - hitHealth,0,playerMaxHealth);
-    // Reduce the competitor's health
-    compHealth = 0;//constrain(compHealth - hitHealth,0,compMaxHealth);
-
-    // Check if the competitor died
-    if (compHealth === 0) {
-      // Move the "new" competitor to a random position
-      compX = random(0,width);
-      compY = random(0,height);
-      // Give it full health
-      compHealth = compMaxHealth;
-      // Console log
-      console.log("Competitor died!");
-    }
-  }
-}
-
-
 // movePrey()
 //
 // Moves the prey based on Perlin noise based velocity changes
@@ -311,54 +361,12 @@ function movePrey() {
   }
 }
 
-// moveCompetitor()
-//
-// Moves the competitor based on Perlin noise based velocity changes
-function moveCompetitor() {
-  // Change the prey's velocity using the Perlin noise
-  // Use map() to convert from the 0-1 range of the noise() function
-  // to the appropriate range of velocities for the prey
-  compVX = map(noise(compTX),0,1,-compMaxSpeed,compMaxSpeed);
-  compVY = map(noise(compTY),0,1,-compMaxSpeed,compMaxSpeed);
-  //Change time value so the noise value will be different on the next frame
-  compTX += 0.01;
-  compTY += 0.01;
-
-  // Update prey position based on velocity
-  compX += compVX;
-  compY += compVY;
-
-  // Screen wrapping
-  if (compX < 0) {
-    compX += width;
-  }
-  else if (compX > width) {
-    compX -= width;
-  }
-
-  if (compY < 0) {
-    compY += height;
-  }
-  else if (compY > height) {
-    compY -= height;
-  }
-}
-
-
 // drawPrey()
 //
 // Draw the prey as an ellipse with alpha based on health
 function drawPrey() {
   fill(preyFill,preyHealth);
   ellipse(preyX,preyY,preyRadius*2);
-}
-
-// drawCompetitor()
-//
-// Draw the prey as an ellipse with alpha based on health
-function drawCompetitor() {
-  fill(compFill,compHealth);
-  rect(compX,compY,compRadius*2,compRadius*2);
 }
 
 // drawPlayer()
