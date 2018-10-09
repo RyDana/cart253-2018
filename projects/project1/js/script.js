@@ -27,7 +27,7 @@ var playerHealthLoss;
 // Player fill color
 var playerFill = 50;
 
-// Prey position, size, velocity, time
+// Prey position, size, velocity, Perlin noise's time
 var preyX;
 var preyY;
 var preyRadius = 25;
@@ -42,8 +42,25 @@ var preyMaxHealth = 100;
 // Prey fill color
 var preyFill = 200;
 
+//Competitor position, size, velocity, Perlin noise's time
+var compX;
+var compY;
+var compRadius = 25;
+var compVX;
+var compVY;
+var compMaxSpeed = 10;
+var compTX;
+var compTY;
+// Prey health
+var compHealth;
+var compMaxHealth = 100;
+// Prey fill color
+var compFill = 100;
+
 // Amount of health obtained per frame of "eating" the prey
 var eatHealth = 10;
+//Amount of health removed when hitting a competitor
+var hitHealth = 20;
 // Number of prey eaten during the game
 var preyEaten = 0;
 
@@ -52,10 +69,12 @@ var preyEaten = 0;
 // Sets up the basic elements of the game
 function setup() {
   createCanvas(500,500);
+  rectMode(CENTER);
 
   noStroke();
 
   setupPrey();
+  setupCompetitor();
   setupPlayer();
 }
 
@@ -70,6 +89,19 @@ function setupPrey() {
   preyTX = random(0,1000);
   preyTY = random(0,1000);
   preyHealth = preyMaxHealth;
+}
+
+//setupCompetitor()
+//
+//Initialises competitor's position, velocity, health and Perlin noise time
+function setupCompetitor() {
+  compX = width/2;
+  compY = height/5;
+  compVX = -compMaxSpeed;
+  compVY = compMaxSpeed;
+  compTX = random(0,1000);
+  compTY = random(0,1000);
+  compHealth = compMaxHealth;
 }
 
 // setupPlayer()
@@ -96,12 +128,15 @@ function draw() {
 
     movePlayer();
     movePrey();
+    moveCompetitor();
 
     updateHealth();
     checkEating();
+    checkHit();
 
     drawPrey();
     drawPlayer();
+    drawCompetitor();
   }
   else {
     showGameOver();
@@ -214,9 +249,36 @@ function checkEating() {
   }
 }
 
+//checkHit()
+//
+//Checks if the player has hit the competitor and updates health of both
+function checkHit(){
+  // Get distance of player to competitor
+  var d = dist(playerX,playerY,compX,compY);
+  // Check if it's an overlap
+  if (d < playerRadius + compRadius) {
+    // Reduce the player health
+    playerHealth = constrain(playerHealth - hitHealth,0,playerMaxHealth);
+    // Reduce the competitor's health
+    compHealth = 0;//constrain(compHealth - hitHealth,0,compMaxHealth);
+
+    // Check if the competitor died
+    if (compHealth === 0) {
+      // Move the "new" competitor to a random position
+      compX = random(0,width);
+      compY = random(0,height);
+      // Give it full health
+      compHealth = compMaxHealth;
+      // Console log
+      console.log("Competitor died!");
+    }
+  }
+}
+
+
 // movePrey()
 //
-// Moves the prey based on random velocity changes
+// Moves the prey based on Perlin noise based velocity changes
 function movePrey() {
   ////////NEW////////
   // Change the prey's velocity using the Perlin noise
@@ -249,12 +311,54 @@ function movePrey() {
   }
 }
 
+// moveCompetitor()
+//
+// Moves the competitor based on Perlin noise based velocity changes
+function moveCompetitor() {
+  // Change the prey's velocity using the Perlin noise
+  // Use map() to convert from the 0-1 range of the noise() function
+  // to the appropriate range of velocities for the prey
+  compVX = map(noise(compTX),0,1,-compMaxSpeed,compMaxSpeed);
+  compVY = map(noise(compTY),0,1,-compMaxSpeed,compMaxSpeed);
+  //Change time value so the noise value will be different on the next frame
+  compTX += 0.01;
+  compTY += 0.01;
+
+  // Update prey position based on velocity
+  compX += compVX;
+  compY += compVY;
+
+  // Screen wrapping
+  if (compX < 0) {
+    compX += width;
+  }
+  else if (compX > width) {
+    compX -= width;
+  }
+
+  if (compY < 0) {
+    compY += height;
+  }
+  else if (compY > height) {
+    compY -= height;
+  }
+}
+
+
 // drawPrey()
 //
 // Draw the prey as an ellipse with alpha based on health
 function drawPrey() {
   fill(preyFill,preyHealth);
   ellipse(preyX,preyY,preyRadius*2);
+}
+
+// drawCompetitor()
+//
+// Draw the prey as an ellipse with alpha based on health
+function drawCompetitor() {
+  fill(compFill,compHealth);
+  rect(compX,compY,compRadius*2,compRadius*2);
 }
 
 // drawPlayer()
