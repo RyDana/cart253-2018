@@ -47,6 +47,8 @@ var enemyRadius = 25;
 var enemyMaxSpeed = 5;
 // Enemy fill color
 var enemyFill = 50;
+//Enemy array
+var enemyArray = [];
 //Enemies
 var enemy1;
 var enemy2;
@@ -145,8 +147,6 @@ function setup() {
   setupPrey();
   //setupCompetitor();
   setupPlayer();
-  enemy1 = new Enemy();
-  enemy2 = new Enemy();
 }
 
 // setupPrey()
@@ -199,21 +199,27 @@ function draw() {
 
     movePlayer();
     movePrey();
-    //moveCompetitor();
-    enemy1.move();
-    enemy2.move();
+    if (enemyArray.length >0){
+      for (i = 0; i <enemyArray.length; i++){
+        enemyArray[i].move();
+      }
+    }
 
     updateHealth();
     checkEating();
-    enemy1.checkHit();
-    enemy2.checkHit();
-    //checkHit();
+    if (enemyArray.length >0){
+      for (i = 0; i <enemyArray.length; i++){
+        enemyArray[i].checkHit();
+      }
+    }
 
     drawPrey();
     drawPlayer();
-    enemy1.draw();
-    enemy2.draw();
-    //drawCompetitor();
+    if (enemyArray.length >0){
+      for (i = 0; i <enemyArray.length; i++){
+        enemyArray[i].draw();
+      }
+    }
   }
   else {
     showGameOver();
@@ -322,6 +328,7 @@ function checkEating() {
       preyHealth = preyMaxHealth;
       // Track how many prey were eaten
       preyEaten++;
+      enemyArray.push(new Enemy());
     }
   }
 }
