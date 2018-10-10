@@ -14,6 +14,10 @@ Sources of sounds:
   found on: https://freesound.org/people/eardeer/sounds/402955/
 -Game over sound: j1game_over_mono.wav by jivatma07
   found on: https://freesound.org/people/jivatma07/sounds/173859/
+-Blop sound: Blop.wav by cusconauta
+  found on: https://freesound.org/people/cusconauta/sounds/219012/
+-Damage sound: Damage.ogg by MortisBlack
+  found on: https://freesound.org/people/MortisBlack/sounds/385046/
 
 ******************************************************/
 
@@ -75,6 +79,8 @@ var preyEaten = 0;
 //Fonts, images and sounds
 var myFont;
 var songSound;
+var blopSound;
+var damageSound;
 var gameOverSound;
 var gameOverSongPlayed = 0;
 var starImage;
@@ -145,6 +151,8 @@ Enemy.prototype.checkHit = function() {
     // Move the "new" enemy to a random position
     this.enemyX = random(0,width);
     this.enemyY = random(0,height);
+    //Play damage sound
+    damageSound.play();
 
   }
 }
@@ -168,6 +176,8 @@ function preload() {
   ghostFace = loadImage('assets/images/ghost_face.png');
   songSound = new Audio("assets/sounds/chiptune.mp3");
   gameOverSound = new Audio("assets/sounds/gameOver.wav");
+  blopSound = new Audio('assets/sounds/blop.wav');
+  damageSound = new Audio('assets/sounds/damage.ogg');
 
 }
 
@@ -182,8 +192,8 @@ function setup() {
   noStroke();
 
   setupPrey();
-  //setupCompetitor();
   setupPlayer();
+  songSound.loop =  true;
   songSound.play();
 }
 
@@ -218,20 +228,25 @@ function setupPlayer() {
 // displays the agents.
 // When the game is over, shows the game over screen.
 function draw() {
-  background(r,g,b);
-  if(r == 255 && g < 255 && b == 0){
-    g+=5;
-  }else if (r <= 255 && r > 0 && g == 255 && b == 0){
-    r-=5;
-  }else if (r == 0 && g == 255 && b >= 0 && b < 255){
-    b+=5;
-  }else if (r == 0 && g <= 255 && g > 0 && b == 255){
-    g-=5;
-  }else if (r < 255 && g == 0 && b == 255){
-    r+=5;
-  }else if (r == 255 && g == 0 && b <=255 && b >0){
-    b-=5;
-  }
+  //Changing backround if the player is round, blue backround if else
+  if (playerRoundness == playerRadius){
+    background(r,g,b);
+    if(r == 255 && g < 255 && b == 0){
+      g+=5;
+    }else if (r <= 255 && r > 0 && g == 255 && b == 0){
+      r-=5;
+    }else if (r == 0 && g == 255 && b >= 0 && b < 255){
+      b+=5;
+    }else if (r == 0 && g <= 255 && g > 0 && b == 255){
+      g-=5;
+    }else if (r < 255 && g == 0 && b == 255){
+      r+=5;
+    }else if (r == 255 && g == 0 && b <=255 && b >0){
+      b-=5;
+    }
+ }else{
+   background(100,100,200);
+ }
 
   if (!gameOver) {
     handleInput();
@@ -375,10 +390,12 @@ function checkEating() {
       preyEaten++;
       //Add an enemy to the game
       enemyArray.push(new Enemy());
-      //Decreases enemy and prey size
+      //Decreases enemy and prey size and make the player rounder
       playerRoundness = constrain(playerRoundness + 4,0,playerRadius);
       preyRadius--;
       enemyRadius--;
+      //Play blop sound
+      blopSound.play();
     }
   }
 }
