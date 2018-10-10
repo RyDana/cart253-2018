@@ -79,6 +79,7 @@ var healthBarWidth;
 // Number of prey eaten during the game
 var preyEaten = 0;
 
+////////NEW////////
 //Fonts, images and sounds
 var myFont;
 var songSound;
@@ -183,6 +184,7 @@ function preload() {
   damageSound = new Audio('assets/sounds/damage.ogg');
 
 }
+////////END NEW////////
 
 // setup()
 //
@@ -196,8 +198,10 @@ function setup() {
 
   setupPrey();
   setupPlayer();
+  ////////NEW////////
   songSound.loop =  true;
   songSound.play();
+  ////////END NEW////////
 }
 
 // setupPrey()
@@ -223,8 +227,10 @@ function setupPlayer() {
   playerHealth = playerMaxHealth;
 }
 
+////////NEW////////
 // draw()
 //
+// Shows an into screen, then starts game
 // While the game is active, checks input
 // updates positions of prey and player,
 // checks health (dying), checks eating (overlaps), checks hits (overlaps)
@@ -302,6 +308,8 @@ function draw() {
     showGameOver();
   }
 }
+////////END NEW////////
+
 
 // handleInput()
 //
@@ -405,6 +413,8 @@ function checkEating() {
       preyHealth = preyMaxHealth;
       // Track how many prey were eaten
       preyEaten++;
+
+      ////////NEW////////
       //Add an enemy to the game
       enemyArray.push(new Enemy());
       //Decreases enemy and prey size and make the player rounder
@@ -413,6 +423,7 @@ function checkEating() {
       enemyRadius--;
       //Play blop sound
       blopSound.play();
+      ////////END NEW////////
     }
   }
 }
@@ -458,11 +469,14 @@ function movePrey() {
 function drawPrey() {
   fill(255, 221, 221, 100+preyHealth);
   ellipse(preyX,preyY,preyRadius*2);
+  ////////NEW////////
+  //A rotating star image in the middle of the prey
   push();
   translate(preyX, preyY);
   rotate(frameCount / 50.0);
   image(starImage,0,0,preyRadius,preyRadius);
   pop();
+  ////////END NEW///////
 
 }
 
@@ -472,20 +486,24 @@ function drawPrey() {
 function drawPlayer() {
   fill(153, 153, 255);
   rect(playerX,playerY,playerRadius*2,playerRadius*2, playerRoundness);
-  image(playerFace,playerX,playerY,playerRadius*2,playerRadius*2);
+  image(playerFace,playerX,playerY,playerRadius*2,playerRadius*2); /////NEW/////
 }
 
+////////NEW////////
 // drawHealthBar()
 //
 // Draws a health bar at the bottom of the canvas
 function drawHealthBar(){
   push();
   rectMode(CORNER);
+  //background rectangle of health bar
   fill(100,100,200);
   rect(width/4 - 5,height-35,width/2 + 10,30);
+  //The health bar itself, with its length nased in player health
   fill(153, 153, 255);
   healthBarWidth = map(playerHealth,0,playerMaxHealth, 0, width/2);
   rect(width/4, height-30,healthBarWidth,20);
+  //A text showing the health bar signifies self esteem
   fill(100,100,200);
   textFont(myFont);
   textSize(16);
@@ -494,11 +512,13 @@ function drawHealthBar(){
   text(selfEsteemText,width/2,height-20);
   pop();
 }
+////////END NEW////////
 
 // showGameOver()
 //
 // Display text about the game being over!
 function showGameOver() {
+  ////////NEW////////
   //Stop current song and play game over sound once
   songSound.pause();
   if(gameOverSongPlayed < 1){
@@ -511,5 +531,6 @@ function showGameOver() {
   textAlign(CENTER,CENTER);
   var gameOverText = "GAME OVER\n";
   gameOverText += "Score: " + preyEaten + " ideal(s) chased";
+  ////////END NEW///////
   text(gameOverText,width/2,height/2);
 }
