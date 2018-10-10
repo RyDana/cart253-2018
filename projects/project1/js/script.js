@@ -139,7 +139,7 @@ Enemy.prototype.checkHit = function() {
 //
 //Draws enemy
 Enemy.prototype.drawEnemy = function() {
-    fill(enemyFill, 100);
+    fill(enemyFill);
     rect(this.enemyX,this.enemyY,enemyRadius*2,enemyRadius*2);
 }
 
@@ -148,7 +148,7 @@ Enemy.prototype.drawEnemy = function() {
 //loads a font and images
 function preload() {
   myFont = loadFont('assets/fonts/FontdinerdotcomHuggable.ttf');
-  songSound = new Audio("assets/sounds/chiptune.wav");
+  songSound = new Audio("assets/sounds/chiptune.mp3");
   gameOverSound = new Audio("assets/sounds/gameOver.wav");
 }
 
