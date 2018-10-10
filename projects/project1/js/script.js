@@ -77,7 +77,7 @@ var myFont;
 var songSound;
 var gameOverSound;
 var gameOverSongPlayed = 0;
-var cuteFace;
+var starImage;
 var ghostFace;
 var playerFace;
 
@@ -164,7 +164,7 @@ Enemy.prototype.drawEnemy = function() {
 function preload() {
   myFont = loadFont('assets/fonts/FontdinerdotcomHuggable.ttf');
   playerFace = loadImage('assets/images/player_face.png');
-  cuteFace = loadImage('assets/images/cute_face.png');
+  starImage = loadImage('assets/images/star.png');
   ghostFace = loadImage('assets/images/ghost_face.png');
   songSound = new Audio("assets/sounds/chiptune.mp3");
   gameOverSound = new Audio("assets/sounds/gameOver.wav");
@@ -424,7 +424,12 @@ function movePrey() {
 function drawPrey() {
   fill(255, 221, 221, 100+preyHealth);
   ellipse(preyX,preyY,preyRadius*2);
-  image(cuteFace,preyX,preyY,preyRadius*1.5,preyRadius*1.5);
+  push();
+  translate(preyX, preyY);
+  rotate(frameCount / 50.0);
+  image(starImage,0,0,preyRadius,preyRadius);
+  pop();
+
 }
 
 // drawPlayer()
