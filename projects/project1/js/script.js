@@ -1,17 +1,29 @@
 /******************************************************
 
-Game - Chaser
+Game - I don't wanna be a square
 Dana Ryashy
 
-A simple game of cat and mouse.
+Help little square achieve roundness by chasing his ideal shape.
+Be careful of the ghosts of his square-shaped past as they might hit his self esteem.
 
 Physics-based movement, keyboard controls, health/stamina,
 sprinting, random movement, screen wrap.
+
+Sources of sounds:
+-Background song: Awesomesauce.wav by eardeer,
+  found on: https://freesound.org/people/eardeer/sounds/402955/
+-Game over sound: j1game_over_mono.wav by jivatma07
+  found on: https://freesound.org/people/jivatma07/sounds/173859/
 
 ******************************************************/
 
 // Track whether the game is over
 var gameOver = false;
+
+//RGB values for background
+var r = 255;
+var g = 0;
+var b = 0;
 
 // Player position, size, velocity
 var playerX;
@@ -60,11 +72,14 @@ var healthBarWidth;
 // Number of prey eaten during the game
 var preyEaten = 0;
 
-//Fonts and sounds
+//Fonts, images and sounds
 var myFont;
 var songSound;
 var gameOverSound;
 var gameOverSongPlayed = 0;
+var cuteFace;
+var ghostFace;
+var playerFace;
 
 //Enemy()
 //
@@ -130,7 +145,6 @@ Enemy.prototype.checkHit = function() {
     // Move the "new" enemy to a random position
     this.enemyX = random(0,width);
     this.enemyY = random(0,height);
-    console.log("Enemy died!");
 
   }
 }
@@ -139,8 +153,9 @@ Enemy.prototype.checkHit = function() {
 //
 //Draws enemy
 Enemy.prototype.drawEnemy = function() {
-    fill(enemyFill);
+    fill(enemyFill,120);
     rect(this.enemyX,this.enemyY,enemyRadius*2,enemyRadius*2);
+    image(ghostFace,this.enemyX,this.enemyY,enemyRadius*2,enemyRadius*2);
 }
 
 //preload()
@@ -148,8 +163,12 @@ Enemy.prototype.drawEnemy = function() {
 //loads a font and images
 function preload() {
   myFont = loadFont('assets/fonts/FontdinerdotcomHuggable.ttf');
+  playerFace = loadImage('assets/images/player_face.png');
+  cuteFace = loadImage('assets/images/cute_face.png');
+  ghostFace = loadImage('assets/images/ghost_face.png');
   songSound = new Audio("assets/sounds/chiptune.mp3");
   gameOverSound = new Audio("assets/sounds/gameOver.wav");
+
 }
 
 // setup()
@@ -158,6 +177,7 @@ function preload() {
 function setup() {
   createCanvas(500,500);
   rectMode(CENTER);
+  imageMode(CENTER);
 
   noStroke();
 
@@ -198,7 +218,20 @@ function setupPlayer() {
 // displays the agents.
 // When the game is over, shows the game over screen.
 function draw() {
-  background(100,100,200);
+  background(r,g,b);
+  if(r == 255 && g < 255 && b == 0){
+    g+=5;
+  }else if (r <= 255 && r > 0 && g == 255 && b == 0){
+    r-=5;
+  }else if (r == 0 && g == 255 && b >= 0 && b < 255){
+    b+=5;
+  }else if (r == 0 && g <= 255 && g > 0 && b == 255){
+    g-=5;
+  }else if (r < 255 && g == 0 && b == 255){
+    r+=5;
+  }else if (r == 255 && g == 0 && b <=255 && b >0){
+    b-=5;
+  }
 
   if (!gameOver) {
     handleInput();
@@ -389,8 +422,9 @@ function movePrey() {
 //
 // Draw the prey as an ellipse with alpha based on health
 function drawPrey() {
-  fill(preyFill,preyHealth);
+  fill(255, 221, 221, 100+preyHealth);
   ellipse(preyX,preyY,preyRadius*2);
+  image(cuteFace,preyX,preyY,preyRadius*1.5,preyRadius*1.5);
 }
 
 // drawPlayer()
@@ -399,6 +433,7 @@ function drawPrey() {
 function drawPlayer() {
   fill(153, 153, 255);
   rect(playerX,playerY,playerRadius*2,playerRadius*2, playerRoundness);
+  image(playerFace,playerX,playerY,playerRadius*2,playerRadius*2);
 }
 
 // drawHealthBar()
@@ -430,6 +465,6 @@ function showGameOver() {
   textSize(32);
   textAlign(CENTER,CENTER);
   var gameOverText = "GAME OVER\n";
-  gameOverText += "Score: " + preyEaten + " ideal(s) chased";
+  gameOverText += "Score: " + preyEaten + " shape(s) chased";
   text(gameOverText,width/2,height/2);
 }
