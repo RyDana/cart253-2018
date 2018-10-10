@@ -60,8 +60,11 @@ var healthBarWidth;
 // Number of prey eaten during the game
 var preyEaten = 0;
 
-//Fonts and images
+//Fonts and sounds
 var myFont;
+var songSound;
+var gameOverSound;
+var gameOverSongPlayed = 0;
 
 //Enemy()
 //
@@ -136,7 +139,7 @@ Enemy.prototype.checkHit = function() {
 //
 //Draws enemy
 Enemy.prototype.drawEnemy = function() {
-    fill(enemyFill, 50);
+    fill(enemyFill, 100);
     rect(this.enemyX,this.enemyY,enemyRadius*2,enemyRadius*2);
 }
 
@@ -145,6 +148,8 @@ Enemy.prototype.drawEnemy = function() {
 //loads a font and images
 function preload() {
   myFont = loadFont('assets/fonts/FontdinerdotcomHuggable.ttf');
+  songSound = new Audio("assets/sounds/chiptune.wav");
+  gameOverSound = new Audio("assets/sounds/gameOver.wav");
 }
 
 // setup()
@@ -159,6 +164,7 @@ function setup() {
   setupPrey();
   //setupCompetitor();
   setupPlayer();
+  songSound.play();
 }
 
 // setupPrey()
@@ -337,7 +343,7 @@ function checkEating() {
       //Add an enemy to the game
       enemyArray.push(new Enemy());
       //Decreases enemy and prey size
-      playerRoundness = constrain(playerRoundness - 2,0,playerRadius);
+      playerRoundness = constrain(playerRoundness + 4,0,playerRadius);
       preyRadius--;
       enemyRadius--;
     }
@@ -413,6 +419,12 @@ function drawHealthBar(){
 //
 // Display text about the game being over!
 function showGameOver() {
+  //Stop current song and play game over sound once
+  songSound.pause();
+  if(gameOverSongPlayed < 1){
+    gameOverSound.play();
+    gameOverSongPlayed++;
+  }
   fill(43, 43, 114);
   textFont(myFont);
   textSize(32);
