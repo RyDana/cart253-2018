@@ -17,6 +17,7 @@ var gameOver = false;
 var playerX;
 var playerY;
 var playerRadius = 25;
+var playerRoundness;
 var playerVX = 0;
 var playerVY = 0;
 var playerMaxSpeed;
@@ -58,6 +59,9 @@ var hitHealth = 20;
 var healthBarWidth;
 // Number of prey eaten during the game
 var preyEaten = 0;
+
+//Fonts and images
+var myFont;
 
 //Enemy()
 //
@@ -117,6 +121,8 @@ Enemy.prototype.checkHit = function() {
   if (d < playerRadius + enemyRadius) {
     // Reduce the player health
     playerHealth = constrain(playerHealth - hitHealth,0,playerMaxHealth);
+    // Reduce player's roundness
+    playerRoundness = constrain(playerRoundness - 2,0,playerRadius);
 
     // Move the "new" enemy to a random position
     this.enemyX = random(0,width);
@@ -130,8 +136,15 @@ Enemy.prototype.checkHit = function() {
 //
 //Draws enemy
 Enemy.prototype.drawEnemy = function() {
-    fill(enemyFill);
+    fill(enemyFill, 50);
     rect(this.enemyX,this.enemyY,enemyRadius*2,enemyRadius*2);
+}
+
+//preload()
+//
+//loads a font and images
+function preload() {
+  myFont = loadFont('assets/fonts/FontdinerdotcomHuggable.ttf');
 }
 
 // setup()
@@ -161,25 +174,13 @@ function setupPrey() {
   preyHealth = preyMaxHealth;
 }
 
-//setupCompetitor()
-//
-//Initialises competitor's position, velocity, health and Perlin noise time
-function setupCompetitor() {
-  compX = width/2;
-  compY = height/5;
-  compVX = -compMaxSpeed;
-  compVY = compMaxSpeed;
-  compTX = random(0,1000);
-  compTY = random(0,1000);
-  compHealth = compMaxHealth;
-}
-
 // setupPlayer()
 //
 // Initialises player position and health
 function setupPlayer() {
   playerX = 4*width/5;
   playerY = height/2;
+  playerRoundness = 0;
   playerHealth = playerMaxHealth;
 }
 
@@ -335,6 +336,10 @@ function checkEating() {
       preyEaten++;
       //Add an enemy to the game
       enemyArray.push(new Enemy());
+      //Decreases enemy and prey size
+      playerRoundness = constrain(playerRoundness - 2,0,playerRadius);
+      preyRadius--;
+      enemyRadius--;
     }
   }
 }
@@ -384,10 +389,10 @@ function drawPrey() {
 
 // drawPlayer()
 //
-// Draw the player as an ellipse with alpha based on health
+// Draw the player as an square
 function drawPlayer() {
   fill(153, 153, 255);
-  ellipse(playerX,playerY,playerRadius*2);
+  rect(playerX,playerY,playerRadius*2,playerRadius*2, playerRoundness);
 }
 
 // drawHealthBar()
@@ -408,11 +413,11 @@ function drawHealthBar(){
 //
 // Display text about the game being over!
 function showGameOver() {
+  fill(43, 43, 114);
+  textFont(myFont);
   textSize(32);
   textAlign(CENTER,CENTER);
-  fill(0);
   var gameOverText = "GAME OVER\n";
-  gameOverText += "You ate " + preyEaten + " prey\n";
-  gameOverText += "before you died."
+  gameOverText += "Score: " + preyEaten + " ideal(s) chased";
   text(gameOverText,width/2,height/2);
 }
