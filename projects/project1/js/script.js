@@ -24,6 +24,9 @@ Sources of sounds:
 // Track whether the game is over
 var gameOver = false;
 
+//Intro screen timer
+var introTimer = 0;
+
 //RGB values for background
 var r = 255;
 var g = 0;
@@ -244,11 +247,25 @@ function draw() {
     }else if (r == 255 && g == 0 && b <=255 && b >0){
       b-=5;
     }
- }else{
-   background(100,100,200);
- }
+  }else{
+    background(100,100,200);
+  }
 
-  if (!gameOver) {
+  //An intro sequence displaying some text
+  if (introTimer < 270){
+    fill(43, 43, 114);
+    textFont(myFont);
+    textSize(30);
+    textAlign(CENTER,CENTER);
+    var title = "I DON'T WANNA BE A SQUARE";
+    text(title,width/2,height/2);
+    if(introTimer >130){
+      var title = "I WANNA BE A CIRCLE";
+      text(title,width/2,height*2/3);
+    }
+    introTimer++;
+  }
+  else if (!gameOver) {
     handleInput();
 
     movePlayer();
@@ -493,6 +510,6 @@ function showGameOver() {
   textSize(32);
   textAlign(CENTER,CENTER);
   var gameOverText = "GAME OVER\n";
-  gameOverText += "Score: " + preyEaten + " shape(s) chased";
+  gameOverText += "Score: " + preyEaten + " ideal(s) chased";
   text(gameOverText,width/2,height/2);
 }
