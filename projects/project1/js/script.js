@@ -469,6 +469,12 @@ function drawHealthBar(){
   fill(153, 153, 255);
   healthBarWidth = map(playerHealth,0,playerMaxHealth, 0, width/2);
   rect(width/4, height-30,healthBarWidth,20);
+  fill(100,100,200);
+  textFont(myFont);
+  textSize(16);
+  textAlign(CENTER,CENTER);
+  var selfEsteemText = "SELF ESTEEM";
+  text(selfEsteemText,width/2,height-20);
   pop();
 }
 
