@@ -1,8 +1,7 @@
-// Pong
-// by Pippin Barr
+// Pong Plus
+// by Dana Ryashy
 //
-// A primitive implementation of Pong with no scoring system
-// just the ability to play the game with the keyboard.
+// A simple Pong game with scorekeeping
 
 // Game colors
 var bgColor = 0;
@@ -29,7 +28,7 @@ var paddleInset = 50;
 // LEFT PADDLE
 
 // Basic definition of a left paddle object with its key properties of
-// position, size, velocity, and speed
+// position, size, velocity, score, color and speed
 var leftPaddle = {
   x: 0,
   y: 0,
@@ -38,6 +37,8 @@ var leftPaddle = {
   vx: 0,
   vy: 0,
   speed: 5,
+  score: 0,
+  color: [255, 255, 255],
   upKeyCode: 87, // The key code for W
   downKeyCode: 83 // The key code for S
 }
@@ -45,7 +46,7 @@ var leftPaddle = {
 // RIGHT PADDLE
 
 // Basic definition of a left paddle object with its key properties of
-// position, size, velocity, and speed
+// position, size, velocity, score, color and speed
 var rightPaddle = {
   x: 0,
   y: 0,
@@ -54,6 +55,8 @@ var rightPaddle = {
   vx: 0,
   vy: 0,
   speed: 5,
+  score: 0,
+  color: [255, 255, 255],
   upKeyCode: 38, // The key code for the UP ARROW
   downKeyCode: 40 // The key code for the DOWN ARROW
 }
@@ -252,15 +255,23 @@ function handleBallOffScreen() {
   var ballLeft = ball.x - ball.size/2;
   var ballRight = ball.x + ball.size/2;
 
+  ////////NEW///////
   // Check for ball going off the sides
-  if (ballRight < 0 || ballLeft > width) {
-    // If it went off either side, reset it to the centre
+  if (ballRight < 0 ) {
+    // If it went off the left side, reset it to the centre
     ball.x = width/2;
     ball.y = height/2;
-    // NOTE that we don't change its velocity here so it just
-    // carries on moving with the same velocity after its
-    // position is reset.
-    // This is where we would count points etc!
+
+    //Increase score of right paddle
+    rightPaddle.score ++;
+  } else if (ballLeft > width){
+    //If it went off the right side, reset ball to center
+    ball.x = width/2;
+    ball.y = height/2;
+
+    //Increase score of left paddle
+    leftPaddle.score ++;
+    console.log("Left paddle score: " + leftPaddle.score);
   }
 }
 
@@ -275,5 +286,13 @@ function displayBall() {
 //
 // Draws the specified paddle on screen based on its properties
 function displayPaddle(paddle) {
+  push();
+  fill(paddle.color[0], paddle.color[1], paddle.color[2]);
   rect(paddle.x,paddle.y,paddle.w,paddle.h);
+  pop();
 }
+
+//////NEW//////
+//changleColorPaddle(paddle)
+//
+//Changes the color of the paddle according to the score
