@@ -269,23 +269,21 @@ function handleBallOffScreen() {
   ////////NEW///////
   // Check for ball going off the sides
   if (ballRight < 0 ) {
-    // If it went off the left side, reset it to the centre
-    ball.x = width/2;
-    ball.y = height/2;
-
+    // If it went off the left side
     //Increase score of right paddle
     rightPaddle.score ++;
     //changing the color of the paddle
     changeColorPaddle(rightPaddle);
+    //Call ball reset, the ball will move in positive vx (function's parameter)
+    reset(1);
   } else if (ballLeft > width){
-    //If it went off the right side, reset ball to center
-    ball.x = width/2;
-    ball.y = height/2;
-
+    //If it went off the right side
     //Increase score of left paddle
     leftPaddle.score ++;
     //changing the color of the paddle
     changeColorPaddle(leftPaddle);
+    //Call ball reset, the ball will move in negative vx (function's parameter)
+    reset(-1);
   }
 }
 
@@ -381,5 +379,18 @@ function setColorPaddlesParts(score, colorArray){
         colorArray[1] = 255;
         colorArray[2] = 255;
   }
+}
+
+//reset()
+//
+//Resets the ball in the center, makes it move towards the
+//paddle that won the most recent point with a random y velocity
+function reset(xDirection){
+  ball.x = width/2;
+  ball.y = height/2;
+
+  ball.vx = xDirection * ball.speed;
+  ball.vy = random(3,10);
+
 }
 ////////END NEW////////
