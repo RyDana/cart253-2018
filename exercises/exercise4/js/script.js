@@ -25,6 +25,9 @@ var ball = {
 // How far in from the walls the paddles should be drawn on x
 var paddleInset = 50;
 
+//by how many pixels the innner rectangle of the paddle is smaller then the paddle
+var innerPaddleMargin = 10;
+
 // LEFT PADDLE
 
 // Basic definition of a left paddle object with its key properties of
@@ -34,11 +37,15 @@ var leftPaddle = {
   y: 0,
   w: 20,
   h: 70,
+  r: 5, //corner radius
+  ir: 5, //corner radius of inner rectangle
   vx: 0,
   vy: 0,
   speed: 5,
   score: 0,
   color: [255, 255, 255],
+  innerColor: [255,255,255],
+  inside: false,
   upKeyCode: 87, // The key code for W
   downKeyCode: 83 // The key code for S
 }
@@ -52,11 +59,15 @@ var rightPaddle = {
   y: 0,
   w: 20,
   h: 70,
+  r: 5, //corner radius
+  ir: 5, //corner radius of inner rectangle
   vx: 0,
   vy: 0,
   speed: 5,
   score: 0,
   color: [255, 255, 255],
+  innerColor: [255,255,255],
+  inside: false,
   upKeyCode: 38, // The key code for the UP ARROW
   downKeyCode: 40 // The key code for the DOWN ARROW
 }
@@ -264,6 +275,8 @@ function handleBallOffScreen() {
 
     //Increase score of right paddle
     rightPaddle.score ++;
+    //changing the color of the paddle
+    changeColorPaddle(rightPaddle);
   } else if (ballLeft > width){
     //If it went off the right side, reset ball to center
     ball.x = width/2;
@@ -271,7 +284,8 @@ function handleBallOffScreen() {
 
     //Increase score of left paddle
     leftPaddle.score ++;
-    console.log("Left paddle score: " + leftPaddle.score);
+    //changing the color of the paddle
+    changeColorPaddle(leftPaddle);
   }
 }
 
@@ -288,11 +302,84 @@ function displayBall() {
 function displayPaddle(paddle) {
   push();
   fill(paddle.color[0], paddle.color[1], paddle.color[2]);
-  rect(paddle.x,paddle.y,paddle.w,paddle.h);
+  rect(paddle.x,paddle.y,paddle.w,paddle.h, paddle.r);
   pop();
+  if(paddle.score >= 10){
+    push();
+    fill(paddle.innerColor[0], paddle.innerColor[1], paddle.innerColor[2]);
+    rect(paddle.x,paddle.y,paddle.w - innerPaddleMargin,paddle.h - innerPaddleMargin, paddle.ir);
+    pop();
+  }
 }
 
 //////NEW//////
 //changleColorPaddle(paddle)
 //
 //Changes the color of the paddle according to the score
+function changeColorPaddle(paddle){
+  scoreUnits = paddle.score % 10;
+  scoreTens = Math.floor(paddle.score/10);
+
+  setColorPaddlesParts(scoreUnits, paddle.color);
+  if(paddle.score >= 10){
+    setColorPaddlesParts(scoreTens, paddle.innerColor);
+  }
+}
+
+//setColorPaddlesParts(score, colorArray)
+//
+//Sets the color of wither inner or outer rectangle of the paddle
+function setColorPaddlesParts(score, colorArray){
+  switch(score) {
+    case 1: //red
+        colorArray[0] = 239;
+        colorArray[1] = 74;
+        colorArray[2] = 74;
+        break;
+    case 2: //orange
+        colorArray[0] = 232;
+        colorArray[1] = 121;
+        colorArray[2] = 82;
+        break;
+    case 3: //yellow-orange
+        colorArray[0] = 239;
+        colorArray[1] = 140;
+        colorArray[2] = 73;
+        break;
+    case 4: //yellow
+        colorArray[0] = 239;
+        colorArray[1] = 236;
+        colorArray[2] = 72;
+        break;
+    case 5: //green
+        colorArray[0] = 136;
+        colorArray[1] = 239;
+        colorArray[2] = 72;
+        break;
+    case 6: //turqoise
+        colorArray[0] = 72;
+        colorArray[1] = 239;
+        colorArray[2] = 130;
+        break;
+    case 7: //blue
+        colorArray[0] = 72;
+        colorArray[1] = 200;
+        colorArray[2] = 239;
+        break;
+    case 8: //purple
+        colorArray[0] = 93;
+        colorArray[1] = 83;
+        colorArray[2] = 232;
+        break;
+    case 9: //pink
+        colorArray[0] = 232;
+        colorArray[1] = 82;
+        colorArray[2] = 207;
+        break;
+    default: //when score == 0
+        colorArray[0] = 255;
+        colorArray[1] = 255;
+        colorArray[2] = 255;
+  }
+}
+////////END NEW////////
