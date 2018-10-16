@@ -1,7 +1,12 @@
 // Pong Plus
 // by Dana Ryashy
 //
-// A simple Pong game with scorekeeping
+// A simple Pong game with color-coded scorekeeping
+// Score follows the rainbow-ordered colors:
+// red meaning 1 point, orange meaning 2, yellow is 3 points, etc.
+// An additional, small recrangle is added to the paddle once 10 points are reached.
+// The additional rectangle represents the tens of points:
+// a red one is 1 ten of points (10), an orange one is 2 tens (20), etc.
 
 // Game colors
 var bgColor = 0;
@@ -15,6 +20,7 @@ var ball = {
   x: 0,
   y: 0,
   size: 20,
+  r: 5, //corner radius
   vx: 0,
   vy: 0,
   speed: 5
@@ -25,8 +31,8 @@ var ball = {
 // How far in from the walls the paddles should be drawn on x
 var paddleInset = 50;
 
-//by how many pixels the innner rectangle of the paddle is smaller then the paddle
-var innerPaddleMargin = 10;
+//by how many pixels the small rectangle of the paddle is smaller then the paddle
+var smallPaddleMargin = 10;
 
 // LEFT PADDLE
 
@@ -37,17 +43,24 @@ var leftPaddle = {
   y: 0,
   w: 20,
   h: 70,
-  r: 5, //corner radius
-  ir: 5, //corner radius of inner rectangle
   vx: 0,
   vy: 0,
   speed: 5,
+  /////////NEW/////////
+  r: 5, //corner radius
+  sr: 5, //corner radius of additional (small) rectangle
   score: 0,
-  color: [255, 255, 255],
-  innerColor: [255,255,255],
-  inside: false,
+  color: [255, 255, 255], //RGB array of color for paddle color
+  smallColor: [255,255,255],//RGB array of color for paddle's small rectangle color
+  smallPaddleOffset: -20, //offset between paddle and additional rectangle
+  smallPresence: false, //true or false of presence of additional rectangle
   upKeyCode: 87, // The key code for W
-  downKeyCode: 83 // The key code for S
+  downKeyCode: 83, // The key code for S
+  hasScored: false, //boolean telling if paddle has scored the last point
+  animationTime: 0, //timer for the animation played once point scored
+  animationEllipseSize: 20, //the animation is of an ellipse appearing at paddle position
+  animationEllipseOpacity: 50 //the animation ellipse has changing opacity
+  /////////END NEW/////////
 }
 
 // RIGHT PADDLE
@@ -59,27 +72,38 @@ var rightPaddle = {
   y: 0,
   w: 20,
   h: 70,
-  r: 5, //corner radius
-  ir: 5, //corner radius of inner rectangle
   vx: 0,
   vy: 0,
   speed: 5,
+  /////////NEW/////////
+  r: 5, //corner radius
+  sr: 5, //corner radius of small rectangle
   score: 0,
   color: [255, 255, 255],
-  innerColor: [255,255,255],
-  inside: false,
+  smallColor: [255,255,255],
+  smallPaddleOffset: 20,
+  smallPresence: false,
   upKeyCode: 38, // The key code for the UP ARROW
-  downKeyCode: 40 // The key code for the DOWN ARROW
+  downKeyCode: 40, // The key code for the DOWN ARROW
+  hasScored: false,
+  animationTime: 0,
+  animationEllipseSize: 20,
+  animationEllipseOpacity: 50
+  /////////END NEW/////////
 }
 
 // A variable to hold the beep sound we will play on bouncing
 var beepSFX;
+var pointSound;
+var levelUpSound;
 
 // preload()
 //
 // Loads the beep audio for the sound of bouncing
 function preload() {
   beepSFX = new Audio("assets/sounds/beep.wav");
+  pointSound = new Audio("assets/sounds/point.wav");
+  levelUpSound = new Audio("assets/sounds/level-up.wav");
 }
 
 // setup()
@@ -126,7 +150,7 @@ function setupBall() {
 // Calls the appropriate functions to run the game
 function draw() {
   // Fill the background
-  background(bgColor);
+  background(bgColor, 100);
 
   // Handle input
   // Notice how we're using the SAME FUNCTION to handle the input
@@ -153,8 +177,18 @@ function draw() {
   displayPaddle(leftPaddle);
   displayPaddle(rightPaddle);
   displayBall();
-}
 
+  ////////NEW////////
+  //Creates an animation for the point winner
+  if(leftPaddle.hasScored){
+    winningAnimation(leftPaddle);
+  }
+
+  if(rightPaddle.hasScored){
+    winningAnimation(rightPaddle);
+  }
+  ////////END NEW////////
+}
 
 // handleInput(paddle)
 //
@@ -276,6 +310,13 @@ function handleBallOffScreen() {
     changeColorPaddle(rightPaddle);
     //Call ball reset, the ball will move in positive vx (function's parameter)
     reset(1);
+    //Trigger winning point animation and sounds
+    rightPaddle.hasScored = true;
+    if (rightPaddle.score%10 == 0){
+      levelUpSound.play();
+    } else {
+      pointSound.play();
+    }
   } else if (ballLeft > width){
     //If it went off the right side
     //Increase score of left paddle
@@ -284,14 +325,22 @@ function handleBallOffScreen() {
     changeColorPaddle(leftPaddle);
     //Call ball reset, the ball will move in negative vx (function's parameter)
     reset(-1);
+    //Trigger winning point animation and sounds
+    leftPaddle.hasScored = true;
+    if (leftPaddle.score%10 == 0){
+      levelUpSound.play();
+    } else {
+      pointSound.play();
+    }
   }
+  ////////END NEW////////
 }
 
 // displayBall()
 //
 // Draws ball on screen based on its properties
 function displayBall() {
-  rect(ball.x,ball.y,ball.size,ball.size);
+  rect(ball.x,ball.y,ball.size,ball.size, ball.r);
 }
 
 // displayPaddle(paddle)
@@ -304,13 +353,14 @@ function displayPaddle(paddle) {
   pop();
   if(paddle.score >= 10){
     push();
-    fill(paddle.innerColor[0], paddle.innerColor[1], paddle.innerColor[2]);
-    rect(paddle.x,paddle.y,paddle.w - innerPaddleMargin,paddle.h - innerPaddleMargin, paddle.ir);
+    fill(paddle.smallColor[0], paddle.smallColor[1], paddle.smallColor[2]);
+    rect(paddle.x + paddle.smallPaddleOffset,paddle.y,paddle.w - smallPaddleMargin,paddle.h - smallPaddleMargin, paddle.sr);
     pop();
   }
 }
 
 //////NEW//////
+
 //changleColorPaddle(paddle)
 //
 //Changes the color of the paddle according to the score
@@ -320,13 +370,13 @@ function changeColorPaddle(paddle){
 
   setColorPaddlesParts(scoreUnits, paddle.color);
   if(paddle.score >= 10){
-    setColorPaddlesParts(scoreTens, paddle.innerColor);
+    setColorPaddlesParts(scoreTens, paddle.smallColor);
   }
 }
 
 //setColorPaddlesParts(score, colorArray)
 //
-//Sets the color of wither inner or outer rectangle of the paddle
+//Sets the color of the rectangles of the paddle
 function setColorPaddlesParts(score, colorArray){
   switch(score) {
     case 1: //red
@@ -393,4 +443,30 @@ function reset(xDirection){
   ball.vy = random(3,10);
 
 }
+
+//winningAnimation(paddle)
+//
+//Creates a winning animation when a player earns a point
+function winningAnimation(paddle){
+  //The animation lasts 60 frames
+  if(paddle.animationTime<60){
+    //The animated ellipse is of the color of the paddle
+    push();
+    fill(paddle.color[0],paddle.color[1],paddle.color[2], paddle.animationEllipseOpacity);
+    ellipse(paddle.x, paddle.y,paddle.animationEllipseSize);
+    pop();
+    //It increases in size at every frame
+    //And decreases in opacity at every frame
+    paddle.animationTime++;
+    paddle.animationEllipseSize += 10;
+    paddle.animationEllipseOpacity --;
+  }else{
+    //resetting the variables once the animation is over
+    paddle.hasScored = false;
+    paddle.animationTime = 0;
+    paddle.animationEllipseSize = 20;
+    paddle.animationEllipseOpacity = 50;
+  }
+}
+
 ////////END NEW////////
