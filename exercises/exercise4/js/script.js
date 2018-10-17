@@ -7,6 +7,15 @@
 // An additional, small recrangle is added to the paddle once 10 points are reached.
 // The additional rectangle represents the tens of points:
 // a red one is 1 ten of points (10), an orange one is 2 tens (20), etc.
+//
+//Sources of sounds:
+//-Point sound:videogame_jump.wav by kwahmah_02
+//    found on: https://freesound.org/people/kwahmah_02/sounds/262893/
+//
+//-Level-up sound:Retro game heal sound by lulyc
+//    found on:https://freesound.org/people/lulyc/sounds/346116/
+//
+//*****************************************************************************
 
 // Game colors
 var bgColor = 0;
