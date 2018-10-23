@@ -10,7 +10,7 @@ function Paddle(x,y,w,h,speed,downKey,upKey) {
   this.x = x;
   this.y = y;
   this.xv = 0;
-  this.yv = 0;
+  this.vy = 0;
   this.w = w;
   this.h = h;
   this.speed = speed;
@@ -43,6 +43,6 @@ Paddle.prototype.update = function() {
 //
 // Draw the paddle as a rectangle on the screen
 Paddle.prototype.display = function() {
-    console.log("displaying paddle");
+    console.log("displaying paddle at:" + this.x + "," + this.y);
   rect(this.x,this.y,this.w,this.h);
 }
