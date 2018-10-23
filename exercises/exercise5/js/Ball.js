@@ -47,26 +47,11 @@ Ball.prototype.update = function () {
 // Otherwise it returns false.
 Ball.prototype.isOffScreen = function() {
   // Check for going off screen and reset if so
-  if (this.x + this.size/2 < 0) {
-    // If it went off the left side
-    //trigger events related to score of right paddle
-    rightPaddle.scored();
-
-    //Call ball reset, the ball will move in positive vx (function's parameter)
-    this.reset(1);
-    return true;
-  }
-  else if(this.x - this.size/2 > width){
-    //If it went off the right side
-    //trigger events related to score of left paddle
-    leftPaddle.scored();
-
-    //Call ball reset, the ball will move in negative vx (function's parameter)
-    this.reset(-1); //TODO:check if okay???
-    return true;
+  if (this.x + this.size/2 < 0 || this.x - this.size/2 > width) {
+    return this.x;
   }
   else {
-    return false;
+    return ;
   }
 }
 ////////END NEW ////////
@@ -108,12 +93,12 @@ Ball.prototype.handleCollision = function(paddle) {
 // Set position back to the middle of the screen
 // and moves it towards the player with the winning last point
 // at a random Y velocity
-Ball.prototype.reset = function(xDirection) {
+Ball.prototype.reset = function() {
   this.x = width/2;
   this.y = height/2;
 
   ////////NEW////////
-  ball.vx = xDirection * ball.speed;
-  ball.vy = random(3,10);
+  this.vx = -this.vx;
+  this.vy = random(3,10);
   ////////END NEW////////
 }

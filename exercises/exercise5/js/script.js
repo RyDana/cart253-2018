@@ -75,8 +75,25 @@ function draw() {
   rightPaddle.update();
 
   ///////NEW////////
-  //TODO: this is weird
-  ball.isOffScreen();
+  //.ballOffScreen() returns the position of the ball as it leaves the screen
+  //if it leaves through the left
+  if(ball.isOffScreen() < leftPaddle.x ){
+    // If it went off the left side
+    //trigger events related to score of right paddle
+    rightPaddle.scored();
+
+    //Call ball reset
+    ball.reset();
+  }
+  //if it leaves through the right
+  else if (ball.isOffScreen() > rightPaddle.x){
+    // If it went off the right side
+    //trigger events related to score of left paddle
+    leftPaddle.scored();
+
+    //Call ball reset
+    ball.reset();
+  }
   ////////END NEW////////
 
   ball.handleCollision(leftPaddle);
