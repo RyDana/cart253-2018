@@ -14,6 +14,20 @@ var ball;
 var leftPaddle;
 var rightPaddle;
 
+// A variable to hold the beep sound we will play on bouncing
+var beepSFX;
+var pointSound;
+var levelUpSound;
+
+// preload()
+//
+// Loads the beep audio for the sound of bouncing
+function preload() {
+  beepSFX = new Audio("assets/sounds/beep.wav");
+  pointSound = new Audio("assets/sounds/point.wav");
+  levelUpSound = new Audio("assets/sounds/level-up.wav");
+}
+
 // setup()
 //
 // Creates the ball and paddles
@@ -44,9 +58,11 @@ function draw() {
   leftPaddle.update();
   rightPaddle.update();
 
-  if (ball.isOffScreen()) {
-    ball.reset();
-  }
+  //TODO: this is weird
+  ball.isOffScreen(rightPaddle,leftPaddle);
+  // if (ball.isOffScreen(rightPaddle,leftPaddle,levelUpSound,pointSound)) {
+  //   ball.reset();
+  // }
 
   ball.handleCollision(leftPaddle);
   ball.handleCollision(rightPaddle);

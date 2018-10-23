@@ -85,14 +85,14 @@ Paddle.prototype.display = function() {
 Paddle.prototype.changePaddleColor = function(){
   //Score is divided into units and tens
   var scoreUnits = this.score % 10;
-  var scoreTens = Math.floor(paddle.score/10);
+  var scoreTens = Math.floor(this.score/10);
 
   //the Units "color" the main paddle
-  this.setColorPaddlesParts(scoreUnits, paddle.color);
+  this.setColorPaddlesParts(scoreUnits, this.color);
 
   //The tens, if existant, color the small rectangle baing part of the paddle
-  if(paddle.score >= 10){
-  this.setColorPaddlesParts(scoreTens, paddle.smallPaddleColor);
+  if(this.score >= 10){
+    this.setColorPaddlesParts(scoreTens, this.smallPaddleColor);
   }
 }
 
@@ -153,3 +153,5 @@ Paddle.prototype.setColorPaddlesParts = function(scoreNumber, colorArray){
         colorArray[2] = 255;
   }
 }
+
+////////END NEW///////
