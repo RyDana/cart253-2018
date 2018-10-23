@@ -43,7 +43,7 @@ Ball.prototype.update = function () {
 //
 // Checks if the ball has moved off the screen and, if so, returns true.
 // Otherwise it returns false.
-Ball.prototype.isOffScreen = function(rightPaddle,leftPaddle) {
+Ball.prototype.isOffScreen = function() {
   // Check for going off screen and reset if so
   if (this.x + this.size/2 < 0) {
     // If it went off the left side
@@ -98,14 +98,17 @@ Ball.prototype.display = function () {
 // and if so reverse x velocity to bounce
 Ball.prototype.handleCollision = function(paddle) {
   // Check if the ball overlaps the paddle on x axis
-  if (this.x + this.size > paddle.x && this.x < paddle.x + paddle.w) {
+  if (this.x + this.size/2 > paddle.x - paddle.w/2 && this.x - this.size/2 < paddle.x + paddle.w/2) {
     // Check if the ball overlaps the paddle on y axis
-    if (this.y + this.size > paddle.y && this.y < paddle.y + paddle.h) {
+    if (this.y + this.size/2 > paddle.y - paddle.h/2 && this.y - this.size/2  < paddle.y + paddle.h/2) {
       // If so, move ball back to previous position (by subtracting current velocity)
       this.x -= this.vx;
       this.y -= this.vy;
       // Reverse x velocity to bounce
       this.vx = -this.vx;
+      // Play our bouncing sound effect by rewinding and then playing
+      beepSFX.currentTime = 0;
+      beepSFX.play();
     }
   }
 }

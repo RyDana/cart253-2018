@@ -38,10 +38,10 @@ function setup() {
   // Create a ball
   ball = new Ball(width/2,height/2,5,5,10,5);
   // Create the right paddle with UP and DOWN as controls
-  rightPaddle = new Paddle(width-20,height/2,15,60,10,DOWN_ARROW,UP_ARROW,5);
+  rightPaddle = new Paddle(width-20,height/2,15,60,10,DOWN_ARROW,UP_ARROW,10);
   // Create the left paddle with W and S as controls
   // Keycodes 83 and 87 are W and S respectively
-  leftPaddle = new Paddle(20,height/2,15,60,10,83,87,-5);
+  leftPaddle = new Paddle(20,height/2,15,60,10,83,87,-10);
 }
 
 // draw()
@@ -49,7 +49,7 @@ function setup() {
 // Handles input, updates all the elements, checks for collisions
 // and displays everything.
 function draw() {
-  background(0);
+  background(0, 100);
 
   leftPaddle.handleInput();
   rightPaddle.handleInput();
@@ -59,7 +59,7 @@ function draw() {
   rightPaddle.update();
 
   //TODO: this is weird
-  ball.isOffScreen(rightPaddle,leftPaddle);
+  ball.isOffScreen();
   // if (ball.isOffScreen(rightPaddle,leftPaddle,levelUpSound,pointSound)) {
   //   ball.reset();
   // }
@@ -70,4 +70,15 @@ function draw() {
   ball.display();
   leftPaddle.display();
   rightPaddle.display();
+
+  ////////NEW////////
+  //Creates an animation for the point winner
+  if(leftPaddle.hasScored){
+    leftPaddle.winningAnimation();
+  }
+
+  if(rightPaddle.hasScored){
+    rightPaddle.winningAnimation();
+  }
+  ////////END NEW////////
 }

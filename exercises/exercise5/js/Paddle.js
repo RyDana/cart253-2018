@@ -52,7 +52,7 @@ Paddle.prototype.handleInput = function() {
 // Constrain the resulting position to be within the canvas
 Paddle.prototype.update = function() {
   this.y += this.vy;
-  this.y = constrain(this.y,0,height-this.h);
+  this.y = constrain(this.y,0+this.h/2,height-this.h/2);
 }
 
 // display()
@@ -151,6 +151,31 @@ Paddle.prototype.setColorPaddlesParts = function(scoreNumber, colorArray){
         colorArray[0] = 255;
         colorArray[1] = 255;
         colorArray[2] = 255;
+  }
+}
+
+//winningAnimation(paddle)
+//
+//Creates a winning animation when a player earns a point
+Paddle.prototype.winningAnimation = function(){
+  //The animation lasts 60 frames
+  if(this.animationTime<60){
+    //The animated ellipse is of the color of the paddle
+    push();
+    fill(this.color[0],this.color[1],this.color[2], this.animationEllipseOpacity);
+    ellipse(this.x, this.y,this.animationEllipseSize);
+    pop();
+    //It increases in size at every frame
+    //And decreases in opacity at every frame
+    this.animationTime++;
+    this.animationEllipseSize += 10;
+    this.animationEllipseOpacity --;
+  }else{
+    //resetting the variables once the animation is over
+    this.hasScored = false;
+    this.animationTime = 0;
+    this.animationEllipseSize = 20;
+    this.animationEllipseOpacity = 50;
   }
 }
 
