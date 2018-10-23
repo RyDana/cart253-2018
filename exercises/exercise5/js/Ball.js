@@ -31,52 +31,37 @@ Ball.prototype.update = function () {
   this.y += this.vy;
 
   // Constrain y position to be on screen
-  this.y = constrain(this.y,0,height-this.size);
+  this.y = constrain(this.y,0 + this.size/2,height-this.size/2);
 
   // Check for touching upper or lower edge and reverse velocity if so
-  if (this.y === 0 || this.y + this.size === height) {
+  if (this.y - this.size/2 === 0 || this.y + this.size/2 === height) {
     this.vy = -this.vy;
   }
 }
 
 // isOffScreen()
 //
-// Checks if the ball has moved off the screen and, if so, returns true.
+// Checks if the ball has moved off the screen and, if so,
+// gives point to the winning player and returns true.
 // Otherwise it returns false.
 Ball.prototype.isOffScreen = function() {
   // Check for going off screen and reset if so
   if (this.x + this.size/2 < 0) {
     // If it went off the left side
-    //Increase score of right paddle
-    rightPaddle.score ++;
-    //changing the color of the paddle
-    rightPaddle.changePaddleColor();
+    //trigger events related to score of right paddle
+    rightPaddle.scored();
+
     //Call ball reset, the ball will move in positive vx (function's parameter)
     this.reset(1);
-    //Trigger winning point animation and sounds
-    rightPaddle.hasScored = true;
-    if (rightPaddle.score%10 == 0){
-      levelUpSound.play();
-    } else {
-      pointSound.play();
-    }
     return true;
   }
   else if(this.x - this.size/2 > width){
     //If it went off the right side
-    //Increase score of left paddle
-    leftPaddle.score ++;
-    //changing the color of the paddle
-    leftPaddle.changePaddleColor();
+    //trigger events related to score of left paddle
+    leftPaddle.scored();
+    
     //Call ball reset, the ball will move in negative vx (function's parameter)
     this.reset(-1); //TODO:check if okay???
-    //Trigger winning point animation and sounds
-    leftPaddle.hasScored = true;
-    if (leftPaddle.score%10 == 0){
-      levelUpSound.play();
-    } else {
-      pointSound.play();
-    }
     return true;
   }
   else {

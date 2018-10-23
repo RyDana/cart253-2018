@@ -81,8 +81,14 @@ Paddle.prototype.display = function() {
 
 // changePaddleColor()
 //
-// Changes the color of the paddle according to the score
-Paddle.prototype.changePaddleColor = function(){
+// controls sequences of events once a player has scored
+Paddle.prototype.scored = function() {
+  //Increase score of the player
+  this.score ++;
+
+  //Trigger winning point animation by making hasScored variable true
+  this.hasScored = true;
+
   //Score is divided into units and tens
   var scoreUnits = this.score % 10;
   var scoreTens = Math.floor(this.score/10);
@@ -93,6 +99,14 @@ Paddle.prototype.changePaddleColor = function(){
   //The tens, if existant, color the small rectangle baing part of the paddle
   if(this.score >= 10){
     this.setColorPaddlesParts(scoreTens, this.smallPaddleColor);
+  }
+
+  //Triggers sound of either "scoring a point"
+  //or "leveling up" sound every 10 points scored
+  if (this.score%10 === 0){
+    levelUpSound.play();
+  } else {
+    pointSound.play();
   }
 }
 
