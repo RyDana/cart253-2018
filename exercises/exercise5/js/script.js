@@ -20,13 +20,14 @@ var rightPaddle;
 function setup() {
   createCanvas(640,480);
   rectMode(CENTER);
+  noStroke();
   // Create a ball
   ball = new Ball(width/2,height/2,5,5,10,5);
   // Create the right paddle with UP and DOWN as controls
-  rightPaddle = new Paddle(width-35,height/2,15,60,10,DOWN_ARROW,UP_ARROW,15);
+  rightPaddle = new Paddle(width-20,height/2,15,60,10,DOWN_ARROW,UP_ARROW,5);
   // Create the left paddle with W and S as controls
   // Keycodes 83 and 87 are W and S respectively
-  leftPaddle = new Paddle(20,height/2,15,60,10,83,87,-15);
+  leftPaddle = new Paddle(20,height/2,15,60,10,83,87,-5);
 }
 
 // draw()

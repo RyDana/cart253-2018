@@ -59,6 +59,97 @@ Paddle.prototype.update = function() {
 //
 // Draw the paddle as a rectangle on the screen
 Paddle.prototype.display = function() {
+  /////NEW//////
+  push();
   fill(this.color[0], this.color[1],this.color[2]);
-  rect(this.x,this.y,this.w,this.h);
+  rect(this.x,this.y,this.w,this.h, this.r);
+  pop();
+  if(this.score >= 10){
+    push();
+    fill(this.smallPaddleColor[0], this.smallPaddleColor[1], this.smallPaddleColor[2]);
+    rect(this.x + this.smallPaddleOffset,
+      this.y,
+      this.w - this.smallPaddleSize,
+      this.h - this.smallPaddleSize,
+      this.sr);
+    pop();
+  }
+  //////END NEW//////
+}
+
+////////NEW////////
+
+// changePaddleColor()
+//
+// Changes the color of the paddle according to the score
+Paddle.prototype.changePaddleColor = function(){
+  //Score is divided into units and tens
+  var scoreUnits = this.score % 10;
+  var scoreTens = Math.floor(paddle.score/10);
+
+  //the Units "color" the main paddle
+  this.setColorPaddlesParts(scoreUnits, paddle.color);
+
+  //The tens, if existant, color the small rectangle baing part of the paddle
+  if(paddle.score >= 10){
+  this.setColorPaddlesParts(scoreTens, paddle.smallPaddleColor);
+  }
+}
+
+//setColorPaddlesParts(score, colorArray)
+//
+//Sets the color of either of the rectangles of the paddle
+//according to the score number given
+Paddle.prototype.setColorPaddlesParts = function(scoreNumber, colorArray){
+  switch(scoreNumber) {
+    case 1: //red
+        colorArray[0] = 239;
+        colorArray[1] = 74;
+        colorArray[2] = 74;
+        break;
+    case 2: //orange
+        colorArray[0] = 232;
+        colorArray[1] = 121;
+        colorArray[2] = 82;
+        break;
+    case 3: //yellow-orange
+        colorArray[0] = 239;
+        colorArray[1] = 140;
+        colorArray[2] = 73;
+        break;
+    case 4: //yellow
+        colorArray[0] = 239;
+        colorArray[1] = 236;
+        colorArray[2] = 72;
+        break;
+    case 5: //green
+        colorArray[0] = 136;
+        colorArray[1] = 239;
+        colorArray[2] = 72;
+        break;
+    case 6: //turqoise
+        colorArray[0] = 72;
+        colorArray[1] = 239;
+        colorArray[2] = 130;
+        break;
+    case 7: //blue
+        colorArray[0] = 72;
+        colorArray[1] = 200;
+        colorArray[2] = 239;
+        break;
+    case 8: //purple
+        colorArray[0] = 93;
+        colorArray[1] = 83;
+        colorArray[2] = 232;
+        break;
+    case 9: //pink
+        colorArray[0] = 232;
+        colorArray[1] = 82;
+        colorArray[2] = 207;
+        break;
+    default: //when score == 0
+        colorArray[0] = 255;
+        colorArray[1] = 255;
+        colorArray[2] = 255;
+  }
 }
