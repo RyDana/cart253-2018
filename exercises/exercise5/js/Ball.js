@@ -39,6 +39,7 @@ Ball.prototype.update = function () {
   }
 }
 
+////////NEW////////
 // isOffScreen()
 //
 // Checks if the ball has moved off the screen and, if so,
@@ -59,7 +60,7 @@ Ball.prototype.isOffScreen = function() {
     //If it went off the right side
     //trigger events related to score of left paddle
     leftPaddle.scored();
-    
+
     //Call ball reset, the ball will move in negative vx (function's parameter)
     this.reset(-1); //TODO:check if okay???
     return true;
@@ -68,6 +69,7 @@ Ball.prototype.isOffScreen = function() {
     return false;
   }
 }
+////////END NEW ////////
 
 // display()
 //
@@ -87,13 +89,16 @@ Ball.prototype.handleCollision = function(paddle) {
     // Check if the ball overlaps the paddle on y axis
     if (this.y + this.size/2 > paddle.y - paddle.h/2 && this.y - this.size/2  < paddle.y + paddle.h/2) {
       // If so, move ball back to previous position (by subtracting current velocity)
-      this.x -= this.vx;
-      this.y -= this.vy;
+      // this.x -= this.vx;
+      // this.y -= this.vy;
       // Reverse x velocity to bounce
       this.vx = -this.vx;
+
+      ////////NEW////////
       // Play our bouncing sound effect by rewinding and then playing
       beepSFX.currentTime = 0;
       beepSFX.play();
+      ////////END NEW////////
     }
   }
 }
@@ -107,6 +112,8 @@ Ball.prototype.reset = function(xDirection) {
   this.x = width/2;
   this.y = height/2;
 
+  ////////NEW////////
   ball.vx = xDirection * ball.speed;
-  ball.vy = random(3,15);
+  ball.vy = random(3,10);
+  ////////END NEW////////
 }

@@ -3,11 +3,25 @@
 //
 // A primitive implementation of Pong with no scoring system
 // just the ability to play the game with the keyboard.
+// Score follows the rainbow-ordered colors:
+// red meaning 1 point, orange meaning 2, yellow is 3 points, etc.
+// An additional, small recrangle is added to the paddle once 10 points are reached.
+// The additional rectangle represents the tens of points:
+// a red one is 1 ten of points (10), an orange one is 2 tens (20), etc.
 //
 // Arrow keys control the right hand paddle, W and S control
 // the left hand paddle.
 //
 // Written with JavaScript OOP.
+//
+//Sources of sounds:
+//-Point sound:videogame_jump.wav by kwahmah_02
+//    found on: https://freesound.org/people/kwahmah_02/sounds/262893/
+//
+//-Level-up sound:Retro game heal sound by lulyc
+//    found on:https://freesound.org/people/lulyc/sounds/346116/
+//
+//*****************************************************************************
 
 // Variable to contain the objects representing our ball and paddles
 var ball;
@@ -19,6 +33,7 @@ var beepSFX;
 var pointSound;
 var levelUpSound;
 
+////////NEW////////
 // preload()
 //
 // Loads the beep audio for the sound of bouncing
@@ -27,6 +42,7 @@ function preload() {
   pointSound = new Audio("assets/sounds/point.wav");
   levelUpSound = new Audio("assets/sounds/level-up.wav");
 }
+////////END NEW///////
 
 // setup()
 //
@@ -58,11 +74,10 @@ function draw() {
   leftPaddle.update();
   rightPaddle.update();
 
+  ///////NEW////////
   //TODO: this is weird
   ball.isOffScreen();
-  // if (ball.isOffScreen(rightPaddle,leftPaddle,levelUpSound,pointSound)) {
-  //   ball.reset();
-  // }
+  ////////END NEW////////
 
   ball.handleCollision(leftPaddle);
   ball.handleCollision(rightPaddle);
@@ -73,6 +88,7 @@ function draw() {
 
   ////////NEW////////
   //Creates an animation for the point winner
+  //(Needs to be called on multiple frames)
   if(leftPaddle.hasScored){
     leftPaddle.winningAnimation();
   }
