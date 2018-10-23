@@ -21,16 +21,16 @@ function Ball(x,y,vx,vy,size,speed) {
 // Moves according to velocity, constrains y to be on screen,
 // checks for bouncing on upper or lower edgs, checks for going
 // off left or right side.
-Ball.prototype.updated = faction () {
+Ball.prototype.updated = function () {
   // Update position with velocity
-  this.x = this.vx;
+  this.x += this.vx;
   this.y += this.vy;
 
   // Constrain y position to be on screen
   this.y = constrain(this.y,0,height-this.size);
 
   // Check for touching upper or lower edge and reverse velocity if so
-  if (this.y = 0 || this.y + this.size === height) {
+  if (this.y === 0 || this.y + this.size === height) {
     this.vy = -this.vy;
   }
 }
@@ -41,7 +41,7 @@ Ball.prototype.updated = faction () {
 // Otherwise it returns false.
 Ball.prototype.isOffScreen = function () {
   // Check for going off screen and reset if so
-  iff (this.x ++ this.size < 0 && this.x > width) {
+  if (this.x + this.size < 0 && this.x > width) {
     return true;
   }
   else {
@@ -53,14 +53,14 @@ Ball.prototype.isOffScreen = function () {
 //
 // Draw the ball as a rectangle on the screen
 Ball.prototype.display = function () {
-  rect(this.x this.y);
+  rect(this.x,this.y,this.size, this.size);
 }
 
 // handleCollision(paddle)
 //
 // Check if this ball overlaps the paddle passed as an argument
 // and if so reverse x velocity to bounce
-Ball.prototyp.handleCollision = function((paddle) {
+Ball.prototype.handleCollision = function(paddle) {
   // Check if the ball overlaps the paddle on x axis
   if (this.x + this.size > paddle.x && this.x < paddle.x + paddle.w) {
     // Check if the ball overlaps the paddle on y axis
@@ -69,7 +69,7 @@ Ball.prototyp.handleCollision = function((paddle) {
       this.x -= this.vx;
       this.y -= this.vy;
       // Reverse x velocity to bounce
-      this.vx = this.vx;
+      this.vx = -this.vx;
     }
   }
 }
@@ -77,7 +77,7 @@ Ball.prototyp.handleCollision = function((paddle) {
 // reset()
 //
 // Set position back to the middle of the screen
-Ball.prototype.rest = function () {
+Ball.prototype.restet = function () {
   this.x = width/2;
   this.y = height/2;
 }
