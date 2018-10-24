@@ -43,15 +43,15 @@ Ball.prototype.update = function () {
 // isOffScreen()
 //
 // Checks if the ball has moved off the screen and, if so,
-// gives point to the winning player and returns true.
-// Otherwise it returns false.
+// returns ball's x position.
+// Otherwise it returns half of canvas' width: an x position where the
+// ball is certainly not off screen.
 Ball.prototype.isOffScreen = function() {
-  // Check for going off screen and reset if so
   if (this.x + this.size/2 < 0 || this.x - this.size/2 > width) {
     return this.x;
   }
   else {
-    return ;
+    return width/2 ;
   }
 }
 ////////END NEW ////////
