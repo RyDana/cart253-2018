@@ -42,6 +42,11 @@ var startGameText = "PRESS X TO START THE GAME"
 var textOpacity = 0; //text will have a changing opacity for fade-in effect
 var xPressed = false; //Detects when the x key is pressed to start game
 var coundownTimer = 180; //A countdown of 180ms plays before game starts
+
+//Game Over variables
+var winnerDisplayText;
+var pointsToWin = 11;
+var gameOverText = "GAME OVER";
 ///////END NEW////////
 
 // preload()
@@ -81,7 +86,9 @@ function draw() {
   /////NEW///////
   if (introPlaying){
     displayIntro(); //Starting with an intro
-  } else {
+  } else if (leftPaddle.score === pointsToWin || rightPaddle.score === pointsToWin){
+    displayGameOver(); //End with a game over
+  }else {
   ////////END NEW///////
     leftPaddle.handleInput();
     rightPaddle.handleInput();
@@ -180,6 +187,20 @@ function displayIntro(){
     text(startGameText, width/2, height/2 + 100);
     textOpacity++; //text appears in a fade-in, thus with increasing opacity
   }
+}
+
+function displayGameOver(){
+  fill(random(200,255));
+  textSize(50);
+  text(gameOverText,width/2,height/2);
+  textSize(25);
+  if(rightPaddle.score > leftPaddle.score){
+    var winnerDisplayText = "RIGHT PLAYER WON";
+  } else {
+    winnerDisplayText = "LEFT PLAYER WON";
+  }
+  text(winnerDisplayText, width/2, height/2 + 100);
+
 }
 
 //////END NEW///////
