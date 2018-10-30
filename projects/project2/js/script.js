@@ -33,7 +33,6 @@ var beepSFX;
 var pointSound;
 var levelUpSound;
 
-////////NEW////////
 // preload()
 //
 // Loads the beep audio for the sound of bouncing
@@ -42,7 +41,6 @@ function preload() {
   pointSound = new Audio("assets/sounds/point.wav");
   levelUpSound = new Audio("assets/sounds/level-up.wav");
 }
-////////END NEW///////
 
 // setup()
 //
@@ -74,9 +72,7 @@ function draw() {
   leftPaddle.update();
   rightPaddle.update();
 
-  ////////NEW////////
   checkForScores();
-  ////////END NEW////////
 
   ball.handleCollision(leftPaddle);
   ball.handleCollision(rightPaddle);
@@ -85,7 +81,6 @@ function draw() {
   leftPaddle.display();
   rightPaddle.display();
 
-  ////////NEW////////
   //Creates an animation for the point winner
   //(Needs to be called on multiple frames)
   if(leftPaddle.hasScored){
@@ -95,11 +90,9 @@ function draw() {
   if(rightPaddle.hasScored){
     rightPaddle.winningAnimation();
   }
-  ////////END NEW////////
 }
 
 function checkForScores(){
-  ///////NEW////////
   //.ballOffScreen() returns the position of the ball as it leaves the screen
   //if it leaves through the left
   if(ball.isOffScreen() < leftPaddle.x ){
@@ -119,5 +112,4 @@ function checkForScores(){
     //Call ball reset
     ball.reset();
   }
-  ////////END NEW////////
 }

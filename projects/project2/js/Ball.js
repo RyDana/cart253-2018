@@ -15,9 +15,7 @@ function Ball(x,y,vx,vy,size,speed) {
   this.vy = vy;
   this.size = size;
   this.speed = speed;
-  ////////NEW////////
   this.r = 2; //corner radius
-  ////////END NEW////////
 }
 
 // update()
@@ -39,7 +37,6 @@ Ball.prototype.update = function () {
   }
 }
 
-////////NEW////////
 // isOffScreen()
 //
 // Checks if the ball has moved off the screen and, if so,
@@ -54,7 +51,6 @@ Ball.prototype.isOffScreen = function() {
     return width/2 ;
   }
 }
-////////END NEW ////////
 
 // display()
 //
@@ -79,11 +75,9 @@ Ball.prototype.handleCollision = function(paddle) {
       // Reverse x velocity to bounce
       this.vx = -this.vx;
 
-      ////////NEW////////
       // Play our bouncing sound effect by rewinding and then playing
       beepSFX.currentTime = 0;
       beepSFX.play();
-      ////////END NEW////////
     }
   }
 }
@@ -97,8 +91,6 @@ Ball.prototype.reset = function() {
   this.x = width/2;
   this.y = height/2;
 
-  ////////NEW////////
   this.vx = -this.vx;
   this.vy = random(3,10);
-  ////////END NEW////////
 }

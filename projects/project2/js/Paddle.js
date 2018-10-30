@@ -16,7 +16,6 @@ function Paddle(x,y,w,h,speed,downKey,upKey,smallPaddleOffset) {
   this.speed = speed;
   this.downKey = downKey;
   this.upKey = upKey;
-  ////////NEW////////
   this.r = 5; //corner radius
   this.sr = 5; //corner radius of small rectangle
   this.score = 0; //player score
@@ -28,7 +27,6 @@ function Paddle(x,y,w,h,speed,downKey,upKey,smallPaddleOffset) {
   this.animationTime = 0; //timer for animation once player scored
   this.animationEllipseSize = 20; //size of ellipse involved in animation
   this.animationEllipseOpacity = 50; //opacity of ellipse involved in animation
-  ////////END NEW////////
 }
 
 // handleInput()
@@ -59,7 +57,6 @@ Paddle.prototype.update = function() {
 //
 // Draw the paddle as a rectangle on the screen
 Paddle.prototype.display = function() {
-  /////NEW//////
   push();
   fill(this.color[0], this.color[1],this.color[2]);
   rect(this.x,this.y,this.w,this.h, this.r);
@@ -74,10 +71,7 @@ Paddle.prototype.display = function() {
       this.sr);
     pop();
   }
-  //////END NEW//////
 }
-
-////////NEW////////
 
 // changePaddleColor()
 //
@@ -192,5 +186,3 @@ Paddle.prototype.winningAnimation = function(){
     this.animationEllipseOpacity = 50;
   }
 }
-
-////////END NEW///////
