@@ -27,6 +27,13 @@ function Paddle(x,y,w,h,speed,downKey,upKey,smallPaddleOffset) {
   this.animationTime = 0; //timer for animation once player scored
   this.animationEllipseSize = 20; //size of ellipse involved in animation
   this.animationEllipseOpacity = 50; //opacity of ellipse involved in animation
+
+  ////////NEW////////
+  // when the paddle is hit by enemy ball, this becomes true and triggers events
+  this.wasHit = false;
+  //when hit by enemy ball, the paddle will have a disadvantage for 300 frames
+  this.disadvantageTimer = 300;
+
 }
 
 // handleInput()
@@ -184,5 +191,21 @@ Paddle.prototype.winningAnimation = function(){
     this.animationTime = 0;
     this.animationEllipseSize = 20;
     this.animationEllipseOpacity = 50;
+  }
+}
+
+////////NEW////////
+Paddle.prototype.inDisadvantage = function(){
+  if(this.disadvantageTimer === 300){
+    this.speed = -this.speed;
+    this.disadvantageTimer--;
+  }else if (this.disadvantageTimer === 0){
+    this.speed = -this.speed;
+    this.wasHit = false;
+    this.disadvantageTimer = 300;
+    this.setColorPaddlesParts(this.score%10, this.color);
+  }else{
+    this.disadvantageTimer--;
+    this.color = [255,0,0];
   }
 }

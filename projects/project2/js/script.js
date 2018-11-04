@@ -25,6 +25,7 @@
 
 // Variable to contain the objects representing our ball and paddles
 var ball;
+var enemyBall;
 var leftPaddle;
 var rightPaddle;
 
@@ -69,6 +70,10 @@ function setup() {
   noStroke();
   // Create a ball
   ball = new Ball(width/2,height/2,5,5,10,5);
+  ////////NEW////////
+  //Create enemy ball
+  enemyBall = new EnemyBall(width/2,height/2,-5,-5,10,5);
+  ////////END NEW////////
   // Create the right paddle with UP and DOWN as controls
   rightPaddle = new Paddle(width-20,height/2,15,60,10,DOWN_ARROW,UP_ARROW,10);
   // Create the left paddle with W and S as controls
@@ -94,6 +99,7 @@ function draw() {
     rightPaddle.handleInput();
 
     ball.update();
+    enemyBall.update();
     leftPaddle.update();
     rightPaddle.update();
 
@@ -102,7 +108,19 @@ function draw() {
     ball.handleCollision(leftPaddle);
     ball.handleCollision(rightPaddle);
 
+
+    enemyBall.handleCollision(leftPaddle);
+    enemyBall.handleCollision(rightPaddle);
+
+    if(leftPaddle.wasHit){
+      leftPaddle.inDisadvantage();
+    }
+    if(rightPaddle.wasHit){
+      rightPaddle.inDisadvantage();
+    }
+
     ball.display();
+    enemyBall.display();
     leftPaddle.display();
     rightPaddle.display();
 
@@ -115,6 +133,7 @@ function draw() {
     if(rightPaddle.hasScored){
       rightPaddle.winningAnimation();
     }
+
   }
 }
 
