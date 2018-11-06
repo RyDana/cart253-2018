@@ -46,8 +46,9 @@ var coundownTimer = 180; //A countdown of 180ms plays before game starts
 
 //Game Over variables
 var winnerDisplayText;
-var pointsToWin = 11;
+var pointsToWin = 20;
 var gameOverText = "GAME OVER";
+var restartGameText = "PRESS X TO START ANOTHER GAME"
 ///////END NEW////////
 
 // preload()
@@ -108,7 +109,7 @@ function draw() {
     ball.handleCollision(leftPaddle);
     ball.handleCollision(rightPaddle);
 
-
+    ///////NEW////////
     enemyBall.handleCollision(leftPaddle);
     enemyBall.handleCollision(rightPaddle);
 
@@ -118,6 +119,7 @@ function draw() {
     if(rightPaddle.wasHit){
       rightPaddle.inDisadvantage();
     }
+    /////////END NEW////////
 
     ball.display();
     enemyBall.display();
@@ -137,11 +139,15 @@ function draw() {
   }
 }
 
+///////NEW////////
+//checkForScores()
+//
+//Checks if ball is off screen, attributes a point and resets ball
 function checkForScores(){
+
   //.ballOffScreen() returns the position of the ball as it leaves the screen
-  //if it leaves through the left
+  //if it leaves through the left side
   if(ball.isOffScreen() < leftPaddle.x ){
-    // If it went off the left side
     //trigger events related to score of right paddle
     rightPaddle.scored();
 
@@ -150,7 +156,6 @@ function checkForScores(){
   }
   //if it leaves through the right
   else if (ball.isOffScreen() > rightPaddle.x){
-    // If it went off the right side
     //trigger events related to score of left paddle
     leftPaddle.scored();
 
@@ -159,7 +164,10 @@ function checkForScores(){
   }
 }
 
-///////NEW////////
+
+//displayIntro()
+//
+//Displays title of game, controls, and creates countdown once player starts game
 function displayIntro(){
   //setting some text
   textFont(myFont);
@@ -176,6 +184,8 @@ function displayIntro(){
     //the intro stops playing after the countdown is over
     if(coundownTimer === 0){
       introPlaying = false;
+      xPressed = false;
+      coundownTimer = 180;
     //During the countdown, paddle, ball and some text are displayed
     }else{
       ball.display();
@@ -208,18 +218,40 @@ function displayIntro(){
   }
 }
 
+//displayGameOver()
+//
+//diplays game over text, the winner, and possibility to restart game
 function displayGameOver(){
+  //Display "Game Ove" the text
   fill(random(200,255));
   textSize(50);
-  text(gameOverText,width/2,height/2);
+  text(gameOverText,width/2,height/2-100);
+
+  //Display who won
   textSize(25);
   if(rightPaddle.score > leftPaddle.score){
-    var winnerDisplayText = "RIGHT PLAYER WON";
+    winnerDisplayText = "RIGHT PLAYER WON";
   } else {
     winnerDisplayText = "LEFT PLAYER WON";
   }
-  text(winnerDisplayText, width/2, height/2 + 100);
+  text(winnerDisplayText, width/2, height/2);
 
+  //Displays "press x to restart"
+  text(restartGameText, width/2, height/2+100);
+
+  //detect if x key has been pressed
+  if(keyIsDown(88)){
+    //Resets balls and players
+    ball.reset();
+    enemyBall.reset();
+    leftPaddle.reset();
+    rightPaddle.reset();
+
+    // Triggers the intro sequence
+    introPlaying = true;
+    // Skips the title screen
+    xPressed = true;
+  }
 }
 
 //////END NEW///////

@@ -1,8 +1,8 @@
 // Ball
 //
-// A class to define how a ball behaves. Including bouncing on the top
-// and bottom edges of the canvas, going off the left and right sides,
-// and bouncing off paddles.
+// A class to define how an enemy ball behaves. Including bouncing on the top,
+// bottom, right and left edges of the canvas,
+// and hitting the paddles.
 
 
 // Ball constructor
@@ -16,13 +16,16 @@ function EnemyBall(x,y,vx,vy,size,speed) {
   this.size = size;
   this.speed = speed;
   this.r = 2; //corner radius
+  this.color = [255,0,0]; //color of ball
+  //min and max speed of ball
+  this.minSpeed = 3;
+  this.maxSpeed = 10;
 }
 
 // update()
 //
-// Moves according to velocity, constrains y to be on screen,
-// checks for bouncing on upper or lower edgs, checks for going
-// off left or right side.
+// Moves according to velocity, constrains y and x to be on screen,
+// checks for bouncing on edges
 EnemyBall.prototype.update = function () {
   // Update position with velocity
   this.x += this.vx;
@@ -43,48 +46,32 @@ EnemyBall.prototype.update = function () {
 
 }
 
-// isOffScreen()
-//
-// Checks if the ball has moved off the screen and, if so,
-// returns ball's x position.
-// Otherwise it returns half of canvas' width: an x position where the
-// ball is certainly not off screen.
-// Ball.prototype.isOffScreen = function() {
-//   if (this.x + this.size/2 < 0 || this.x - this.size/2 > width) {
-//     return this.x;
-//   }
-//   else {
-//     return width/2 ;
-//   }
-// }
-
 // display()
 //
 // Draw the ball as a rectangle on the screen
 EnemyBall.prototype.display = function () {
-  fill(255,0,0);
+  fill(this.color[0],this.color[1],this.color[2]);
   rect(this.x,this.y,this.size,this.size, this.r);
 }
 
 // handleCollision(paddle)
 //
 // Check if this ball overlaps the paddle passed as an argument
-// and if so reverse x velocity to bounce
+// and if so changes paddle's wasHit proprety
 EnemyBall.prototype.handleCollision = function(paddle) {
   // Check if the ball overlaps the paddle on x axis
   if (this.x + this.size/2 > paddle.x - paddle.w/2 && this.x - this.size/2 < paddle.x + paddle.w/2) {
     // Check if the ball overlaps the paddle on y axis
     if (this.y + this.size/2 > paddle.y - paddle.h/2 && this.y - this.size/2  < paddle.y + paddle.h/2) {
-      // If so, move ball back to previous position (by subtracting current velocity)
-      // this.x -= this.vx;
-      // this.y -= this.vy;
-      // Reverse x velocity to bounce
-      // this.vx = -this.vx;
-      //
-      // // Play our bouncing sound effect by rewinding and then playing
+
+      // Play the hit sound effect by rewinding and then playing
       // beepSFX.currentTime = 0;
       // beepSFX.play();
+
+      //Changes the paddle proprety that triggers a disadvantage
       paddle.wasHit = true;
+
+      //restets position of the ball
       this.reset();
     }
   }
@@ -93,12 +80,18 @@ EnemyBall.prototype.handleCollision = function(paddle) {
 // reset()
 //
 // Set position back to the middle of the screen
-// and moves it towards the player with the winning last point
-// at a random Y velocity
+// and moves it in a randomdirection and velocity
 EnemyBall.prototype.reset = function() {
   this.x = width/2;
   this.y = height/2;
 
-  this.vx = random(3,10);
-  this.vy = random(3,10);
+  //decides wether x velocity is positive or negative, at random
+  var posOrNeg = Math.random() < 0.5 ? -1 : 1;
+
+  //assigns a random x velocity
+  this.vx = random(this.minSpeed,this.maxSpeed) * (posOrNeg);
+
+  //assigns a random y velocity and direction
+  posOrNeg = Math.random() < 0.5 ? -1 : 1;
+  this.vy = random(this.minSpeed,this.maxSpeed) * (posOrNeg);
 }

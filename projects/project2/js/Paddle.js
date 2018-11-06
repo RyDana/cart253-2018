@@ -33,6 +33,8 @@ function Paddle(x,y,w,h,speed,downKey,upKey,smallPaddleOffset) {
   this.wasHit = false;
   //when hit by enemy ball, the paddle will have a disadvantage for 300 frames
   this.disadvantageTimer = 300;
+  this.maxDisadvantageTime = 300;
+  this.disadvantageColor = [255,0,0];
 
 }
 
@@ -195,17 +197,49 @@ Paddle.prototype.winningAnimation = function(){
 }
 
 ////////NEW////////
+//inDisadvantage()
+//
+//When triggered, puts the paddle in disadvantage for a certain time
+// by inverting its speed,thus inverting the controls.
+// Changes the color of the paddle
 Paddle.prototype.inDisadvantage = function(){
-  if(this.disadvantageTimer === 300){
+  //Inverts the speed of the paddle only once, at the beginning of the timer
+  if(this.disadvantageTimer === this.maxDisadvantageTime){
     this.speed = -this.speed;
+
+    //decreases the timer
     this.disadvantageTimer--;
+
+  //When the timer reaches 0,
   }else if (this.disadvantageTimer === 0){
+    //set the speed to positive again
     this.speed = -this.speed;
+    //resets the proprety that triggers the disadvantage
     this.wasHit = false;
-    this.disadvantageTimer = 300;
+    //resets the timer
+    this.disadvantageTimer = this.maxDisadvantageTime;
+    //resets the color of the paddle
     this.setColorPaddlesParts(this.score%10, this.color);
+  //While the timer is running
   }else{
+    //decrease the timer
     this.disadvantageTimer--;
-    this.color = [255,0,0];
+    //changes the color of the paddle
+    this.color = [this.disadvantageColor[0],this.disadvantageColor[1],this.disadvantageColor[2]];
   }
+}
+
+//reset()
+//
+// Resets paddle propreties that have been changed during the game
+Paddle.prototype.reset = function(){
+  this.speed = Math.abs(this.speed); //paddle speed (if was inverted)
+  this.y = height/2; //y position
+  this.score = 0; //player score
+  this.color = [255,255,255]; //paddle color
+  this.hasScored = false; //detection if player scored the last point
+  this.animationTime = 0; //timer for animation once player scored
+  this.wasHit = false; //detection of paddle hit by enemy ball
+  this.disadvantageTimer = this.maxDisadvantageTime; //timer for paddle being in disadvantage
+
 }

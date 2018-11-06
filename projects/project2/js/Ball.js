@@ -16,6 +16,10 @@ function Ball(x,y,vx,vy,size,speed) {
   this.size = size;
   this.speed = speed;
   this.r = 2; //corner radius
+  this.color = [255,255,255]; //color of ball
+  //min and max speed of ball
+  this.minSpeed = 3;
+  this.maxSpeed = 10;
 }
 
 // update()
@@ -56,7 +60,7 @@ Ball.prototype.isOffScreen = function() {
 //
 // Draw the ball as a rectangle on the screen
 Ball.prototype.display = function () {
-  fill(255);
+  fill(this.color[0],this.color[1],this.color[2]);
   rect(this.x,this.y,this.size,this.size, this.r);
 }
 
@@ -92,5 +96,5 @@ Ball.prototype.reset = function() {
   this.y = height/2;
 
   this.vx = -this.vx;
-  this.vy = random(3,10);
+  this.vy = random(this.minSpeed,this.maxSpeed);
 }
