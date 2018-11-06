@@ -28,6 +28,7 @@ var ball;
 var enemyBall;
 var leftPaddle;
 var rightPaddle;
+var ballMultiplier;
 
 // A variable to hold the beep sound we will play on bouncing
 var beepSFX;
@@ -66,7 +67,7 @@ function preload() {
 //
 // Creates the ball and paddles
 function setup() {
-  createCanvas(640,480);
+  createCanvas(1280,480);
   rectMode(CENTER);
   noStroke();
   // Create a ball
@@ -74,6 +75,8 @@ function setup() {
   ////////NEW////////
   //Create enemy ball
   enemyBall = new EnemyBall(width/2,height/2,-5,-5,10,5);
+  //Create ball ball Multiplier
+  ballMultiplier = new BallMultiplier();
   ////////END NEW////////
   // Create the right paddle with UP and DOWN as controls
   rightPaddle = new Paddle(width-20,height/2,15,60,10,DOWN_ARROW,UP_ARROW,10);
@@ -101,6 +104,7 @@ function draw() {
 
     ball.update();
     enemyBall.update();
+    ballMultiplier.update();
     leftPaddle.update();
     rightPaddle.update();
 
@@ -123,6 +127,7 @@ function draw() {
 
     ball.display();
     enemyBall.display();
+    ballMultiplier.display();
     leftPaddle.display();
     rightPaddle.display();
 
@@ -188,7 +193,9 @@ function displayIntro(){
       coundownTimer = 180;
     //During the countdown, paddle, ball and some text are displayed
     }else{
+      ballMultiplier.display();
       ball.display();
+      enemyBall.display();
       leftPaddle.display();
       rightPaddle.display();
       fill(255);
