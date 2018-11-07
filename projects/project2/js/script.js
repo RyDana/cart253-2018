@@ -1,13 +1,15 @@
 // Basic OO Pong
 // by Dana Ryashy
 //
-// A primitive implementation of Pong with no scoring system
-// just the ability to play the game with the keyboard.
+// A game of Pong, with some twists
 // Score follows the rainbow-ordered colors:
 // red meaning 1 point, orange meaning 2, yellow is 3 points, etc.
 // An additional, small recrangle is added to the paddle once 10 points are reached.
 // The additional rectangle represents the tens of points:
 // a red one is 1 ten of points (10), an orange one is 2 tens (20), etc.
+//Players should avoid the red ball or their controls will be inverted
+//Theres is a ball multiplier that roams around and increases the amounts of
+//balls in the game.
 //
 // Arrow keys control the right hand paddle, W and S control
 // the left hand paddle.
@@ -20,6 +22,9 @@
 //
 //-Level-up sound:Retro game heal sound by lulyc
 //    found on:https://freesound.org/people/lulyc/sounds/346116/
+//
+//-Hit sound:Error.wav sound by Autistic Lucario
+//    found on:https://freesound.org/people/Autistic%20Lucario/sounds/142608/
 //
 //*****************************************************************************
 
@@ -35,12 +40,13 @@ var ballArray = [];
 var beepSFX;
 var pointSound;
 var levelUpSound;
+var hitSound;
 
 ///////NEW////////
 //Intro variables
 var introPlaying = true; //detects when intro should stop being played
 var myFont; //font for text display
-var titleText = "PING PONG FOREVER";
+var titleText = "PING PONG PLUS";
 var startGameText = "PRESS X TO START THE GAME"
 var textOpacity = 0; //text will have a changing opacity for fade-in effect
 var xPressed = false; //Detects when the x key is pressed to start game
@@ -60,6 +66,7 @@ function preload() {
   beepSFX = new Audio("assets/sounds/beep.wav");
   pointSound = new Audio("assets/sounds/point.wav");
   levelUpSound = new Audio("assets/sounds/level-up.wav");
+  hitSound = new Audio("assets/sounds/hit.wav")
 
   myFont = loadFont('assets/fonts/FontdinerdotcomHuggable.ttf');
 }
@@ -247,7 +254,13 @@ function displayIntro(){
   } else {
     fill(random(200,255), constrain(textOpacity,0,255));
     textSize(50);
-    text(titleText,width/2,height/2);
+    text(titleText,width/2,height/2-100);
+    textSize(14);
+    text("Up and down arrows control the right player", width/2, height/2);
+    text("W and S keys control the left player", width/2, height/2 + 20);
+    text("Avoid the red ball or your controls will be inverted for 5 seconds", width/2, height/2 + 40);
+    text("A ball multiplier roams around to duplicate every ball that touches it", width/2, height/2 + 60);
+
     textSize(25);
     text(startGameText, width/2, height/2 + 100);
     textOpacity++; //text appears in a fade-in, thus with increasing opacity

@@ -71,6 +71,9 @@ EnemyBall.prototype.handleCollision = function(paddle) {
       //Changes the paddle proprety that triggers a disadvantage
       paddle.wasHit = true;
 
+      //Play sound
+      hitSound.play();
+
       //restets position of the ball
       this.reset();
     }
