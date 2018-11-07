@@ -236,6 +236,7 @@ Paddle.prototype.reset = function(){
   this.y = height/2; //y position
   this.score = 0; //player score
   this.color = [255,255,255]; //paddle color
+  this.csmallPaddleColor = [255,255,255]; //paddle color
   this.hasScored = false; //detection if player scored the last point
   this.animationTime = 0; //timer for animation once player scored
   this.wasHit = false; //detection of paddle hit by enemy ball
