@@ -26,6 +26,15 @@
 //-Hit sound:Error.wav sound by Autistic Lucario
 //    found on:https://freesound.org/people/Autistic%20Lucario/sounds/142608/
 //
+//-game music sound: live techno loop  sound by frankum
+//    found on:https://freesound.org/people/frankum/sounds/439512/
+//
+//-intro music: Newtime - electronic music track sound by frankum
+//    found on:https://freesound.org/people/frankum/sounds/405603/
+//
+//-game over sound: music game, win or high score.wav sound by xtrgamr
+//    found on:https://freesound.org/people/xtrgamr/sounds/244536/
+//
 //*****************************************************************************
 
 // Variable to contain the objects representing our ball and paddles
