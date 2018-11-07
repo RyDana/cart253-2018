@@ -138,6 +138,9 @@ function draw() {
       rightPaddle.inDisadvantage();
     }
 
+    //Draws a center line;
+    drawCenterLine();
+
     //display all the balls of the array
     for (i = 0; i <ballArray.length; i++){
       ballArray[i].display();
@@ -213,8 +216,10 @@ function displayIntro(){
       introPlaying = false;
       xPressed = false;
       coundownTimer = 180;
-    //During the countdown, paddle, ball and some text are displayed
+    //During the countdown, paddle, ball, centerline,
+    //ball multiplier and some text are displayed
     }else{
+      drawCenterLine();
       ballMultiplier.display();
       ball.display();
       enemyBall.display();
@@ -223,6 +228,8 @@ function displayIntro(){
       fill(255);
       textSize(50);
 
+      ellipse(width/2,height/2 - 95,60);
+      fill(0);
       //The text changes dependant on the countdown timer
       if(coundownTimer > 120){
         text("3",width/2,height/2 - 100);
@@ -304,5 +311,14 @@ function checkForMultiplier(){
     }
   }
 }
+
+//drawCenterLine()
+//
+//Draws a line at the center of the field
+function drawCenterLine(){
+  fill(255);
+  rect(width/2, height/2, 2,500);
+}
+
 
 //////END NEW///////

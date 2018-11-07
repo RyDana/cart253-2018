@@ -34,7 +34,6 @@ function Paddle(x,y,w,h,speed,downKey,upKey,smallPaddleOffset) {
   //when hit by enemy ball, the paddle will have a disadvantage for 300 frames
   this.disadvantageTimer = 300;
   this.maxDisadvantageTime = 300;
-  this.disadvantageColor = [255,0,0];
 
 }
 
@@ -69,17 +68,13 @@ Paddle.prototype.display = function() {
   push();
   fill(this.color[0], this.color[1],this.color[2]);
   rect(this.x,this.y,this.w,this.h, this.r);
+  fill(this.smallPaddleColor[0], this.smallPaddleColor[1], this.smallPaddleColor[2]);
+  rect(this.x + this.smallPaddleOffset,
+    this.y,
+    this.w - this.smallPaddleSize,
+    this.h - this.smallPaddleSize,
+    this.sr);
   pop();
-  if(this.score >= 10){
-    push();
-    fill(this.smallPaddleColor[0], this.smallPaddleColor[1], this.smallPaddleColor[2]);
-    rect(this.x + this.smallPaddleOffset,
-      this.y,
-      this.w - this.smallPaddleSize,
-      this.h - this.smallPaddleSize,
-      this.sr);
-    pop();
-  }
 }
 
 // changePaddleColor()
@@ -96,17 +91,15 @@ Paddle.prototype.scored = function() {
   var scoreUnits = this.score % 10;
   var scoreTens = Math.floor(this.score/10);
 
-  //the Units "color" the main paddle
-  this.setColorPaddlesParts(scoreUnits, this.color);
+  // //the Units "color" the main paddle
+  // this.setColorPaddlesParts(scoreUnits, this.color);
 
-  //The tens, if existant, color the small rectangle baing part of the paddle
-  if(this.score >= 10){
-    this.setColorPaddlesParts(scoreTens, this.smallPaddleColor);
-  }
+  //color the small rectangle of the paddle
+  this.setColorPaddlesParts(scoreUnits, this.smallPaddleColor);
 
   //Triggers sound of either "scoring a point"
-  //or "leveling up" sound every 10 points scored
-  if (this.score%10 === 0){
+  //or "leveling up" sound every 3 points scored
+  if (this.score%3 === 0){
     levelUpSound.play();
   } else {
     pointSound.play();
@@ -177,9 +170,12 @@ Paddle.prototype.setColorPaddlesParts = function(scoreNumber, colorArray){
 Paddle.prototype.winningAnimation = function(){
   //The animation lasts 60 frames
   if(this.animationTime<60){
-    //The animated ellipse is of the color of the paddle
+    //The animated ellipse is of the color of the small recrangle of paddle
     push();
-    fill(this.color[0],this.color[1],this.color[2], this.animationEllipseOpacity);
+    fill(this.smallPaddleColor[0],
+      this.smallPaddleColor[1],
+      this.smallPaddleColor[2],
+      this.animationEllipseOpacity);
     ellipse(this.x, this.y,this.animationEllipseSize);
     pop();
     //It increases in size at every frame
@@ -219,13 +215,16 @@ Paddle.prototype.inDisadvantage = function(){
     //resets the timer
     this.disadvantageTimer = this.maxDisadvantageTime;
     //resets the color of the paddle
-    this.setColorPaddlesParts(this.score%10, this.color);
+    this.color = [255,255,255];
   //While the timer is running
   }else{
     //decrease the timer
     this.disadvantageTimer--;
     //changes the color of the paddle
-    this.color = [this.disadvantageColor[0],this.disadvantageColor[1],this.disadvantageColor[2]];
+    this.color = [255,
+      map(sin(this.disadvantageTimer*0.3),-1,1,0,255),
+      map(sin(this.disadvantageTimer*0.3),-1,1,0,255)
+    ];
   }
 }
 
