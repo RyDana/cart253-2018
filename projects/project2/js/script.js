@@ -41,6 +41,9 @@ var beepSFX;
 var pointSound;
 var levelUpSound;
 var hitSound;
+var introMusic;
+var gameMusic;
+var gameOverMusic;
 
 ///////NEW////////
 //Intro variables
@@ -51,12 +54,16 @@ var startGameText = "PRESS X TO START THE GAME"
 var textOpacity = 0; //text will have a changing opacity for fade-in effect
 var xPressed = false; //Detects when the x key is pressed to start game
 var coundownTimer = 180; //A countdown of 180ms plays before game starts
+var introStarts = true;
 
 //Game Over variables
 var winnerDisplayText;
-var pointsToWin = 20;
+var pointsToWin = 11;
 var gameOverText = "GAME OVER";
 var restartGameText = "PRESS X TO START ANOTHER GAME"
+var gameOverStarts = true;
+
+var gameStarts = true;
 ///////END NEW////////
 
 // preload()
@@ -66,7 +73,10 @@ function preload() {
   beepSFX = new Audio("assets/sounds/beep.wav");
   pointSound = new Audio("assets/sounds/point.wav");
   levelUpSound = new Audio("assets/sounds/level-up.wav");
-  hitSound = new Audio("assets/sounds/hit.wav")
+  hitSound = new Audio("assets/sounds/hit.wav");
+  introMusic = new Audio("assets/sounds/intro_music.mp3");
+  gameMusic = new Audio("assets/sounds/game-music.mp3");
+  gameOverMusic = new Audio("assets/sounds/outro_music.wav");
 
   myFont = loadFont('assets/fonts/FontdinerdotcomHuggable.ttf');
 }
@@ -103,8 +113,22 @@ function draw() {
 
   /////NEW///////
   if (introPlaying){
+    if(introStarts){
+      //play intro music
+      introMusic.loop = true;
+      introMusic.currentTime = 0;
+      introMusic.play();
+      introStarts = false;
+    }
     displayIntro(); //Starting with an intro
   } else if (leftPaddle.score === pointsToWin || rightPaddle.score === pointsToWin){
+    //Turn off game music, rewind it, and play outro music once
+    gameMusic.pause();
+    gameMusic.currentTime = 0;
+    if(gameOverStarts){
+      gameOverMusic.loop = false;
+      gameOverMusic.play();
+    }
     displayGameOver(); //End with a game over
   }else {
     //handle input for paddles
@@ -218,14 +242,22 @@ function displayIntro(){
 
   //Play a 3 second countdown after key press
   if(xPressed){
+
     //the intro stops playing after the countdown is over
     if(coundownTimer === 0){
       introPlaying = false;
       xPressed = false;
       coundownTimer = 180;
+      introStarts = true;
+      gameMusic.loop = true;
+      gameMusic.play();
     //During the countdown, paddle, ball, centerline,
     //ball multiplier and some text are displayed
     }else{
+      //stop the intro music
+      introMusic.pause();
+
+      //draw paddles, balls and multiplier on screen
       drawCenterLine();
       ballMultiplier.display();
       ball.display();
@@ -244,6 +276,11 @@ function displayIntro(){
         text("2",width/2,height/2 - 100);
       } else {
         text("1",width/2,height/2 - 100);
+      }
+
+      //Controls the sounds of countdown
+      if(coundownTimer === 180 || coundownTimer === 120 || coundownTimer === 60){
+        beepSFX.play();
       }
 
       //decrease the countdown timer
@@ -296,6 +333,11 @@ function displayGameOver(){
     enemyBall.reset();
     leftPaddle.reset();
     rightPaddle.reset();
+
+    //Stop outro music, rewinf it and reset trigger
+    gameOverMusic.pause();
+    gameOverMusic.currentTime = 0;
+    gameOverStarts = true;
 
     // Triggers the intro sequence
     introPlaying = true;
