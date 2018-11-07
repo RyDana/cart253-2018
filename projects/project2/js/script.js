@@ -1,5 +1,5 @@
 // Basic OO Pong
-// by Pippin Barr
+// by Dana Ryashy
 //
 // A primitive implementation of Pong with no scoring system
 // just the ability to play the game with the keyboard.
@@ -29,6 +29,7 @@ var enemyBall;
 var leftPaddle;
 var rightPaddle;
 var ballMultiplier;
+var ballArray = [];
 
 // A variable to hold the beep sound we will play on bouncing
 var beepSFX;
@@ -72,6 +73,7 @@ function setup() {
   noStroke();
   // Create a ball
   ball = new Ball(width/2,height/2,5,5,10,5);
+  ballArray.push(ball);
   ////////NEW////////
   //Create enemy ball
   enemyBall = new EnemyBall(width/2,height/2,-5,-5,10,5);
@@ -98,36 +100,54 @@ function draw() {
   } else if (leftPaddle.score === pointsToWin || rightPaddle.score === pointsToWin){
     displayGameOver(); //End with a game over
   }else {
-  ////////END NEW///////
+    //handle input for paddles
     leftPaddle.handleInput();
     rightPaddle.handleInput();
 
-    ball.update();
+    //update the position of every ball in the array
+    for (i = 0; i <ballArray.length; i++){
+      ballArray[i].update();
+    }
+    //update the rest of the elements
     enemyBall.update();
     ballMultiplier.update();
     leftPaddle.update();
     rightPaddle.update();
 
+    //check for scores
     checkForScores();
 
-    ball.handleCollision(leftPaddle);
-    ball.handleCollision(rightPaddle);
+    //Check if balls have collided with multiplier and if so create a new one
+    checkForMultiplier();
 
-    ///////NEW////////
+    //handle collisions with paddles of every ball in the array
+    for (i = 0; i <ballArray.length; i++){
+      ballArray[i].handleCollision(leftPaddle);
+      ballArray[i].handleCollision(rightPaddle);
+    }
+
+    //handle collision of enemy ball with paddles
     enemyBall.handleCollision(leftPaddle);
     enemyBall.handleCollision(rightPaddle);
 
+    //put paddles in disadvantage if they were hit
     if(leftPaddle.wasHit){
       leftPaddle.inDisadvantage();
     }
     if(rightPaddle.wasHit){
       rightPaddle.inDisadvantage();
     }
-    /////////END NEW////////
 
-    ball.display();
+    //display all the balls of the array
+    for (i = 0; i <ballArray.length; i++){
+      ballArray[i].display();
+    }
+
+    //display enemy and ball multiplier
     enemyBall.display();
     ballMultiplier.display();
+    /////////END NEW////////
+
     leftPaddle.display();
     rightPaddle.display();
 
@@ -151,24 +171,26 @@ function draw() {
 function checkForScores(){
 
   //.ballOffScreen() returns the position of the ball as it leaves the screen
-  //if it leaves through the left side
-  if(ball.isOffScreen() < leftPaddle.x ){
-    //trigger events related to score of right paddle
-    rightPaddle.scored();
+  //Check is done for every ball in the array
+  for (i = 0; i <ballArray.length; i++){
+    //if it leaves through the left side
+    if(ballArray[i].isOffScreen() < leftPaddle.x ){
+      //trigger events related to score of right paddle
+      rightPaddle.scored();
 
-    //Call ball reset
-    ball.reset();
-  }
-  //if it leaves through the right
-  else if (ball.isOffScreen() > rightPaddle.x){
-    //trigger events related to score of left paddle
-    leftPaddle.scored();
+      //Call ball reset
+      ballArray[i].reset();
+    }
+    //if it leaves through the right
+    else if (ballArray[i].isOffScreen() > rightPaddle.x){
+      //trigger events related to score of left paddle
+      leftPaddle.scored();
 
-    //Call ball reset
-    ball.reset();
+      //Call ball reset
+      ballArray[i].reset();
+    }
   }
 }
-
 
 //displayIntro()
 //
@@ -250,6 +272,7 @@ function displayGameOver(){
   if(keyIsDown(88)){
     //Resets balls and players
     ball.reset();
+    ballArray = [ball];
     enemyBall.reset();
     leftPaddle.reset();
     rightPaddle.reset();
@@ -258,6 +281,27 @@ function displayGameOver(){
     introPlaying = true;
     // Skips the title screen
     xPressed = true;
+  }
+}
+
+//checkForMultiplier()
+//
+//Check if balls have collided with multiplier and if so create a new one
+function checkForMultiplier(){
+  for (i = 0; i <ballArray.length; i++){
+    //retrieve propreties of the ball that has collided with the multiplier
+    var package = ballMultiplier.handleCollision(ballArray[i]);
+
+    //if that package is not empty
+    if(package != null){
+      //Spawn a new ball onto the game
+      ballArray.push(new Ball(package[0],
+        package[1],
+        package[2],
+        package[3],
+        package[4],
+        package[5]));
+    }
   }
 }
 
