@@ -9,12 +9,17 @@
 var bgColor = 0;
 var fgColor = 255;
 
+//Sounds
+var beepSound;
+
+//player
+var player;
 
 // preload()
 //
 // Loads
 function preload() {
-
+  beepSound = loadSound("assets/sounds/beep.wav")
 }
 
 // setup()
@@ -27,6 +32,10 @@ function setup() {
   noStroke();
   fill(fgColor);
 
+  //Create Player
+  player = new Player(width/2, height/2);
+
+
 }
 
 // draw()
@@ -36,5 +45,10 @@ function draw() {
   // Fill the background
   background(bgColor, 100);
 
+  player.handleInputMove();
+  player.handleInputJump();
+  player.update();
+
+  player.display();
 
 }
