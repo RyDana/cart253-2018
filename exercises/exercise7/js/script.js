@@ -43,7 +43,7 @@ function setup() {
 // Calls the appropriate functions to run the game
 function draw() {
   // Fill the background
-  background(bgColor, 100);
+  background(155, 100);
 
   player.handleInputMove();
   player.handleInputJump();
