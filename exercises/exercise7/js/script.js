@@ -45,10 +45,20 @@ function draw() {
   // Fill the background
   background(155, 100);
 
+  //Handle inputs of player
   player.handleInputMove();
   player.handleInputJump();
-  player.update();
+  player.shoot();
 
+  //Updates playerand bullets shot
+  player.update();
+  player.updateBullets();
+
+  //Displays player and bullets shot
   player.display();
+  player.displayBullets();
 
 }
+
+//TODO: currently the player seems to not be able to shoot while its moving
+//TODO: Allow player to shoot towards the left as well

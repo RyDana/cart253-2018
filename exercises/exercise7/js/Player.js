@@ -16,11 +16,13 @@ function Player(x,y) {
   this.color = [0,0,0];
   this.speed = 10;
   this.jumping = false;
-  this.jumpSpeed = 40;
-  this.downKey = 83;
-  this.upKey = 87;
-  this.leftKey = 65;
-  this.rightKey  = 68;
+  this.jumpSpeed = 40; //speed upwards during jump
+  this.downKey = 83; //S key
+  this.upKey = 87; //W key
+  this.leftKey = 65; //A key
+  this.rightKey  = 68; //D key
+  this.bulletArray = []; //An array containing bullets shot by player
+  this.shot = false; //boolean showing if mouse press released a bullet
 }
 
 // handleInputMove()
@@ -51,13 +53,15 @@ Player.prototype.handleInputMove = function() {
 // Check if the jump (up) key are pressed and update velocity
 // appropriately
 Player.prototype.handleInputJump = function() {
+  //If upkey pressed and player is not jumping already
   if (keyIsDown(this.upKey) && this.jumping === false) {
-    this.vy = -this.jumpSpeed;
-    this.jumping = true;
+    this.vy = -this.jumpSpeed; //upwards velocity
+    this.jumping = true; //jumping state becomes true
   }
   //Quickly releasing the key after pressing it does a smaller jump
+  //If player released up key and player is still in mid air
   if(!keyIsDown(this.upKey) && this.jumping === true){
-    this.vy += 4;
+    this.vy += 4; //force the player down faster ("increased gravity")
   }
 
 }
@@ -66,35 +70,86 @@ Player.prototype.handleInputJump = function() {
 // Update y position based on velocity
 // Constrain the resulting position to be within the canvas
 Player.prototype.update = function() {
-  //Changing the gravity makes the player fall faster
-  //after reaching the peak of the jump
+  // After Player reaches the peak of the jump (falls down)
+  //"increase gravity" to make the player fall down faster
   if(this.vy < 0){
     this.vy += 4;
+  //Otherwise apply "normal gravity" downwards
   } else {
     this.vy += 1.5;
   }
 
+  //Update Y position and constrain on canvas
   this.y += this.vy;
   this.y = constrain(this.y,0+this.h/2,height-this.h/2);
 
+  //If Player is on the "gound" (bottomof canvas),
+  //stop inducing any velocity downwards
   if(this.y === height-this.h/2){
     this.vy = 0;
+
+    //Once the player releases the "jump" key after a jump
+    //allow player to make subsequent jump by changing jumping state to false
+    //Otherwise the player will do multiple jumps if "jump" key remains pushed down
     if(!keyIsDown(this.upKey)){
       this.jumping = false;
     }
   }
 
-
+  //Update X position and constrain on canvas
   this.x += this.vx;
   this.x = constrain(this.x,0+this.w/2,width-this.w/2);
 }
 
 // display()
 //
-// Draw the paddle as a rectangle on the screen
+// Draw the player as a rectangle on the screen
 Player.prototype.display = function() {
   push();
-  fill(this.color[0], this.color[1],this.color[2]);
+  fill(this.color[0], this.color[1],this.color[2]); //black
   rect(this.x,this.y,this.w,this.h, this.r);
   pop();
+}
+
+Player.prototype.shoot = function() {
+  //angle between player center and mouse
+  var angle = atan((this.y - mouseY)/( this.x - mouseX));
+
+  //If player presses mouse and player is not currently shooting
+  if(mouseIsPressed && this.shot === false){
+    //create a new bullet and push it into the array
+    this.bulletArray.push(new Bullet(this.x, this.y, angle));
+    console.log(angle);
+    //Change shooting state
+    this.shot = true;
+  }
+
+  //Player allowed to shoot another bullet only when releases the mouse
+  if(!mouseIsPressed){
+    this.shot = false;
+  }
+}
+
+
+//updateBullets()
+//
+//Updates all the bullets' positions in the bullet array
+Player.prototype.updateBullets = function (){
+  if(this.bulletArray.length > 0){
+    for(i = 0; i < this.bulletArray.length; i++){
+      this.bulletArray[i].update();
+    }
+  }
+
+}
+
+//displayBullets()
+//
+//Dispplays all the bullets in the bullet array
+Player.prototype.displayBullets = function (){
+  if(this.bulletArray.length > 0){
+    for(i = 0; i < this.bulletArray.length; i++){
+      this.bulletArray[i].display();
+    }
+  }
 }
