@@ -14,7 +14,7 @@ function Player(x,y) {
   this.w = 20;
   this.h = 30;
   this.color = [0,0,0];
-  this.speed = 10;
+  this.speed = 8;
   this.jumping = false;
   this.jumpSpeed = 40; //speed upwards during jump
   this.downKey = 83; //S key
@@ -136,20 +136,33 @@ Player.prototype.display = function() {
 }
 
 Player.prototype.shoot = function() {
-  //angle between player center and mouse
-  var angle = atan((this.y - mouseY)/( this.x - mouseX));
+  // //angle between player center and mouse
+  // var angle = atan((this.y - mouseY)/( this.x - mouseX));
+  //
+  // //If player presses mouse and player is not currently shooting
+  // if(mouseIsPressed && this.shot === false){
+  //   //create a new bullet and push it into the array
+  //   this.bulletArray.push(new Bullet(this.x, this.y, angle));
+  //   console.log(angle);
+  //   //Change shooting state
+  //   this.shot = true;
+  // }
+  //
+  // //Player allowed to shoot another bullet only when releases the mouse
+  // if(!mouseIsPressed){
+  //   this.shot = false;
+  // }
 
-  //If player presses mouse and player is not currently shooting
-  if(mouseIsPressed && this.shot === false){
-    //create a new bullet and push it into the array
-    this.bulletArray.push(new Bullet(this.x, this.y, angle));
-    console.log(angle);
-    //Change shooting state
-    this.shot = true;
+  //check state of player
+  if(keyIsDown(this.shootKey) && this.shot === false){
+      //create a new bullet and push it into the array
+      this.bulletArray.push(new Bullet(this.x, this.y, this.facingRight, keyIsDown(this.upKey)));
+      //Change shooting state
+      this.shot = true;
   }
 
   //Player allowed to shoot another bullet only when releases the mouse
-  if(!mouseIsPressed){
+  if(!keyIsDown(this.shootKey)){
     this.shot = false;
   }
 }

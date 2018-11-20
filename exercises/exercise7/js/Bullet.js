@@ -5,15 +5,17 @@
 // Bullet constructor
 //
 // Sets the properties with the provided arguments or defaults
-function Bullet(x,y,angle) {
+function Bullet(x,y,facingRight,pointingUp) {
   this.x = x;
   this.y = y;
-  this.angle = angle; //angle at which bullet travels
+  //this.angle = angle; //angle at which bullet travels
   this.vx = 0;
   this.vy = 0;
-  this.w = 20; //size
+  this.w = 5; //size
   this.color = [0,0,0];
-  this.speed = 5;
+  this.speed = 10;
+  this.facingRight = facingRight;
+  this.pointingUp = pointingUp;
 }
 
 
@@ -21,12 +23,27 @@ function Bullet(x,y,angle) {
 //
 // Update position based on velocity and angle
 Bullet.prototype.update = function() {
+  //
+  // this.vy = this.speed * sin(this.angle);
+  // this.y += this.vy;
+  //
+  // this.vx = this.speed * cos(this.angle);
+  // this.x += this.vx;
 
-  this.vy = this.speed * sin(this.angle);
-  this.y += this.vy;
+  if(this.pointingUp){
+    this.vy = -this.speed;
+  }else{
+    this.vy = 0;
+  }
 
-  this.vx = this.speed * cos(this.angle);
+  if(this.facingRight){
+    this.vx = this.speed;
+  }else{
+    this.vx = -this.speed;
+  }
+
   this.x += this.vx;
+  this.y += this.vy;
 
 }
 
