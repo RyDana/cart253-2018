@@ -19,7 +19,6 @@ var beepSound;
 var player;
 
 //Functions detecting of player on mobile
-document.window.onload = function() {DetectIphone()}
 function DetectIphone()
 {
    //var uagent = navigator.userAgent.toLowerCase();
