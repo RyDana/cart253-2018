@@ -48,6 +48,7 @@ function draw() {
   //Handle inputs of player
   player.handleInputMove();
   player.handleInputJump();
+  player.handleInputCrouch();
   player.shoot();
 
   //Updates playerand bullets shot

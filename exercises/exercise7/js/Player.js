@@ -21,6 +21,9 @@ function Player(x,y) {
   this.upKey = 87; //W key
   this.leftKey = 65; //A key
   this.rightKey  = 68; //D key
+  this.jumpKey = 79; //O key
+  this.shootKey = 80; //P key
+  this.facingRight = true; //Check which side of canvas player is facing
   this.bulletArray = []; //An array containing bullets shot by player
   this.shot = false; //boolean showing if mouse press released a bullet
 }
@@ -32,9 +35,11 @@ function Player(x,y) {
 Player.prototype.handleInputMove = function() {
   if (keyIsDown(this.leftKey)) {
     this.vx = -this.speed;
+    this.facingRight = false;
   }
   else if (keyIsDown(this.rightKey)) {
     this.vx = this.speed;
+    this.facingRight = true;
   }
   else {
     //Gradually slows down the player if no key is pressed
@@ -54,14 +59,27 @@ Player.prototype.handleInputMove = function() {
 // appropriately
 Player.prototype.handleInputJump = function() {
   //If upkey pressed and player is not jumping already
-  if (keyIsDown(this.upKey) && this.jumping === false) {
+  if (keyIsDown(this.jumpKey) && this.jumping === false) {
     this.vy = -this.jumpSpeed; //upwards velocity
     this.jumping = true; //jumping state becomes true
   }
   //Quickly releasing the key after pressing it does a smaller jump
   //If player released up key and player is still in mid air
-  if(!keyIsDown(this.upKey) && this.jumping === true){
+  if(!keyIsDown(this.jumpKey) && this.jumping === true){
     this.vy += 4; //force the player down faster ("increased gravity")
+  }
+
+}
+
+// handleInputCrouch()
+//
+// Check if the crouch (down) key is pressed and change player size accordingly
+Player.prototype.handleInputCrouch = function() {
+  //If downKey pressed and player is not jumping
+  if (keyIsDown(this.downKey) && this.jumping === false) {
+    this.h = 20;
+  } else{
+    this.h = 30;
   }
 
 }
@@ -91,7 +109,7 @@ Player.prototype.update = function() {
     //Once the player releases the "jump" key after a jump
     //allow player to make subsequent jump by changing jumping state to false
     //Otherwise the player will do multiple jumps if "jump" key remains pushed down
-    if(!keyIsDown(this.upKey)){
+    if(!keyIsDown(this.jumpKey)){
       this.jumping = false;
     }
   }
@@ -103,11 +121,17 @@ Player.prototype.update = function() {
 
 // display()
 //
-// Draw the player as a rectangle on the screen
+// Draw the player as a rectangle on the screen with a little ellipse as an eye
 Player.prototype.display = function() {
   push();
   fill(this.color[0], this.color[1],this.color[2]); //black
   rect(this.x,this.y,this.w,this.h, this.r);
+  fill(255); // white
+  if(this.facingRight){
+    ellipse(this.x + this.w/4, this.y - this.h/2 + 5, 5);
+  } else{
+    ellipse(this.x - this.w/4, this.y - this.h/2 + 5, 5);
+  }
   pop();
 }
 
