@@ -12,10 +12,6 @@ var rotationDetected = false;
 //detect if the canvas was created
 var canvasCreated = false;
 
-// Game colors
-var bgColor = 0;
-var fgColor = 255;
-
 //Sounds
 var beepSound;
 
@@ -38,16 +34,21 @@ function setup() {
   // Create canvas and set drawing modes
   if(onMobile){
     createCanvas(window.innerWidth , window.innerHeight);
+    background(0, 216, 255, 100);
+    //create player
+    player = new PlayerMobile(width/2, height/2);
   }else{
     // Fill the background
     createCanvas(1280,480);
+    //Create Player
+    player = new Player(width/2, height/2);
   }
   rectMode(CENTER);
   noStroke();
-  fill(fgColor);
+  textSize(30);
+  textAlign(CENTER,CENTER);
 
-  //Create Player
-  player = new Player(width/2, height/2);
+
 
 
 }
@@ -68,7 +69,7 @@ function draw() {
       }
 
       if(onMobile){
-        background(255,0,0);
+        background(0, 216, 255, 100);
       }else{
         // Fill the background
         background(155, 100);
@@ -96,12 +97,18 @@ function draw() {
 //Functions detecting if player is on mobile
 function detectPhone()
 {
-   //var uagent = navigator.userAgent.toLowerCase();
    if (/Android|iPhone|iPad|iPod|IEMobile|Windows Phone/i.test(navigator.userAgent)){
-     alert('true');
+     //alert('true: ' + navigator.userAgent);
       onMobile = true;
    }else{
-     alert('false');
+     //alert('false: ' + navigator.userAgent);
       onMobile = false;
    }
 }
+
+// function drawControls(){
+//   push();
+//   noFill();
+//   stroke(0);
+//   ellipse(width)
+// }
