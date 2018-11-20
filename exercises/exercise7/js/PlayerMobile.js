@@ -17,15 +17,52 @@ function PlayerMobile(x,y) {
   this.speed = 8;
   this.jumping = false;
   this.jumpSpeed = 40; //speed upwards during jump
-  this.downKey = 83; //S key
-  this.upKey = 87; //W key
-  this.leftKey = 65; //A key
-  this.rightKey  = 68; //D key
-  this.jumpKey = 79; //O key
-  this.shootKey = 80; //P key
+  this.downKeyPressed = false; //S key
+  this.upKeyPressed = false; //W key
+  this.leftKeyPressed = false; //A key
+  this.rightKeyPressed  = false; //D key
+  this.jumpKeyPressed = false; //O key
+  this.shootKeyPressed = false; //P key
   this.facingRight = true; //Check which side of canvas player is facing
   this.bulletArray = []; //An array containing bullets shot by player
   this.shot = false; //boolean showing if mouse press released a bullet
+}
+
+
+PlayerMobile.prototype.playerController = function(){
+  // The touches array holds an object for each and every touch
+  // The array length is dynamic and tied to the number of fingers
+  // currently touching
+  for (var i = 0; i < touches.length; i++) {
+    console.log("checking pression");
+    if(touches[i].x < 130 && touches[i].x > 30 && touches[i].y > height-280 && touches[i].y < height-130 ){
+      this.leftKeyPressed = true;
+      console.log("pressing left");
+    } else{
+      this.leftKeyPressed = false;
+    }
+
+  }
+
+  if(touches.length === 0){
+    this.downKeyPressed = false; //S key
+    this.upKeyPressed = false; //W key
+    this.leftKeyPressed = false; //A key
+    this.rightKeyPressed  = false; //D key
+    this.jumpKeyPressed = false; //O key
+    this.shootKeyPressed = false; //P key
+  }
+}
+
+PlayerMobile.prototype.drawControls = function(){
+  push();
+  noFill();
+  stroke(0);
+  ellipse(180,height-280, 100);
+  ellipse(280,height-180, 100);
+  ellipse(180,height-80, 100);
+  ellipse(80,height-180, 100);
+  pop();
 }
 
 // handleInputMove()
@@ -33,7 +70,7 @@ function PlayerMobile(x,y) {
 // Check if the left or right keys are pressed and update velocity
 // appropriately
 PlayerMobile.prototype.handleInputMove = function() {
-  if (keyIsDown(this.leftKey)) {
+  if (this.leftKeyPressed) {
     this.vx = -this.speed;
     this.facingRight = false;
   }

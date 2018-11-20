@@ -87,6 +87,11 @@ function draw() {
       //Displays player and bullets shot
       player.display();
       player.displayBullets();
+      if(onMobile){
+        player.drawControls();
+        player.playerController();
+      }
+
   }
 
 
@@ -106,9 +111,7 @@ function detectPhone()
    }
 }
 
-// function drawControls(){
-//   push();
-//   noFill();
-//   stroke(0);
-//   ellipse(width)
-// }
+// this prevents dragging screen around
+function touchMoved() {
+  return false;
+}
