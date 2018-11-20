@@ -16,9 +16,20 @@
     <script src="js/Player.js"></script>
     <script src="js/Bullet.js"></script>
   </head>
+  <script>
+    function DetectIphone()
+    {
+       //var uagent = navigator.userAgent.toLowerCase();
+       if (/Android|iPhone|iPad|iPod|IEMobile|Windows Phone/i.test(navigator.userAgent))
+          alert('true');
+       else
+          alert('false');
+    }
+  </script>
 
   <body>
     <!-- HTML would go here if needed. -->
+    <input type="button" OnClick="DetectIphone()" value="Am I an Iphone?" />
   </body>
 
 </html>
