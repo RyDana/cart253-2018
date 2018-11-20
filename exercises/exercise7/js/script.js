@@ -7,6 +7,10 @@
 
 //Detect if user on Phone
 var onMobile = false;
+//Detect when user rotated phone
+var rotationDetected = false;
+//detect if the canvas was created
+var canvasCreated = false;
 
 // Game colors
 var bgColor = 0;
@@ -18,24 +22,13 @@ var beepSound;
 //player
 var player;
 
-//Functions detecting of player on mobile
-function DetectIphone()
-{
-   //var uagent = navigator.userAgent.toLowerCase();
-   if (/Android|iPhone|iPad|iPod|IEMobile|Windows Phone/i.test(navigator.userAgent)){
-     alert('true');
-      onMobile = true;
-   }else{
-     alert('false');
-      onMobile = false;
-   }
-}
-
 // preload()
 //
 // Loads
 function preload() {
   beepSound = loadSound("assets/sounds/beep.wav")
+
+  detectPhone();
 }
 
 // setup()
@@ -43,7 +36,12 @@ function preload() {
 // Creates the canvas, sets up the drawing modes,
 function setup() {
   // Create canvas and set drawing modes
-  createCanvas(1280,480);
+  if(onMobile){
+    createCanvas(window.innerWidth , window.innerHeight);
+  }else{
+    // Fill the background
+    createCanvas(1280,480);
+  }
   rectMode(CENTER);
   noStroke();
   fill(fgColor);
@@ -58,28 +56,50 @@ function setup() {
 //
 // Calls the appropriate functions to run the game
 function draw() {
-  if(onMobile){
-    background(255,0,0);
-  }else{
-    // Fill the background
-    background(255, 100);
+
+  if (onMobile && window.innerWidth < window.innerHeight && !rotationDetected){
+    text("turn your screen to landscape mode", width/2, height/2);
+  } else{
+
+      if(onMobile && !canvasCreated){
+        createCanvas(window.innerWidth,window.innerHeight);
+        canvasCreated = true;
+        rotationDetected = true;
+      }
+      
+      if(onMobile){
+        background(255,0,0);
+      }else{
+        // Fill the background
+        background(155, 100);
+      }
+      //Handle inputs of player
+      player.handleInputMove();
+      player.handleInputJump();
+      player.handleInputCrouch();
+      player.shoot();
+
+      //Updates playerand bullets shot
+      player.update();
+      player.updateBullets();
+
+      //Displays player and bullets shot
+      player.display();
+      player.displayBullets();
   }
 
-  //Handle inputs of player
-  player.handleInputMove();
-  player.handleInputJump();
-  player.handleInputCrouch();
-  player.shoot();
-
-  //Updates playerand bullets shot
-  player.update();
-  player.updateBullets();
-
-  //Displays player and bullets shot
-  player.display();
-  player.displayBullets();
 
 }
 
-//TODO: currently the player seems to not be able to shoot while its moving
-//TODO: Allow player to shoot towards the left as well
+//detectPhone()
+//
+//Functions detecting if player is on mobile
+function detectPhone()
+{
+   //var uagent = navigator.userAgent.toLowerCase();
+   if (/Android|iPhone|iPad|iPod|IEMobile|Windows Phone/i.test(navigator.userAgent)){
+      onMobile = true;
+   }else{
+      onMobile = false;
+   }
+}
