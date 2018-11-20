@@ -66,7 +66,7 @@ function draw() {
         canvasCreated = true;
         rotationDetected = true;
       }
-      
+
       if(onMobile){
         background(255,0,0);
       }else{
@@ -98,8 +98,10 @@ function detectPhone()
 {
    //var uagent = navigator.userAgent.toLowerCase();
    if (/Android|iPhone|iPad|iPod|IEMobile|Windows Phone/i.test(navigator.userAgent)){
+     alert('true');
       onMobile = true;
    }else{
+     alert('false');
       onMobile = false;
    }
 }
