@@ -6,7 +6,7 @@
 //*****************************************************************************
 
 //Detect if user on Phone
-var onMobile;
+var onMobile = false;
 
 // Game colors
 var bgColor = 0;
@@ -24,8 +24,10 @@ function DetectIphone()
 {
    //var uagent = navigator.userAgent.toLowerCase();
    if (/Android|iPhone|iPad|iPod|IEMobile|Windows Phone/i.test(navigator.userAgent)){
+     alert('true');
       onMobile = true;
    }else{
+     alert('false');
       onMobile = false;
    }
 }
@@ -61,7 +63,7 @@ function draw() {
     background(255,0,0);
   }else{
     // Fill the background
-    background(155, 100);
+    background(255, 100);
   }
 
   //Handle inputs of player
