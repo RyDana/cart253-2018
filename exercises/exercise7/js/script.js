@@ -5,6 +5,9 @@
 //
 //*****************************************************************************
 
+//Detect if user on Phone
+var onMobile;
+
 // Game colors
 var bgColor = 0;
 var fgColor = 255;
@@ -14,6 +17,18 @@ var beepSound;
 
 //player
 var player;
+
+//Functions detecting of player on mobile
+document.window.onload = function() {DetectIphone()}
+function DetectIphone()
+{
+   //var uagent = navigator.userAgent.toLowerCase();
+   if (/Android|iPhone|iPad|iPod|IEMobile|Windows Phone/i.test(navigator.userAgent)){
+      onMobile = true;
+   }else{
+      onMobile = false;
+   }
+}
 
 // preload()
 //
@@ -42,8 +57,12 @@ function setup() {
 //
 // Calls the appropriate functions to run the game
 function draw() {
-  // Fill the background
-  background(155, 100);
+  if(onMobile){
+    background(255,0,0);
+  }else{
+    // Fill the background
+    background(155, 100);
+  }
 
   //Handle inputs of player
   player.handleInputMove();
