@@ -17,12 +17,12 @@ function PlayerMobile(x,y) {
   this.speed = 5;
   this.jumping = false;
   this.jumpSpeed = 40; //speed upwards during jump
-  this.downKeyPressed = false; //S key
-  this.upKeyPressed = false; //W key
-  this.leftKeyPressed = false; //A key
-  this.rightKeyPressed  = false; //D key
-  this.jumpKeyPressed = false; //O key
-  this.shootKeyPressed = false; //P key
+  this.downKeyPressed = false;
+  this.upKeyPressed = false;
+  this.leftKeyPressed = false;
+  this.rightKeyPressed  = false;
+  this.jumpKeyPressed = false;
+  this.shootKeyPressed = false;
   this.facingRight = true; //Check which side of canvas player is facing
   this.bulletArray = []; //An array containing bullets shot by player
   this.shot = false; //boolean showing if mouse press released a bullet
@@ -31,9 +31,10 @@ function PlayerMobile(x,y) {
 
 PlayerMobile.prototype.playerController = function(){
   // The touches array holds an object for each and every touch
-  // The array length is dynamic and tied to the number of fingers
-  // currently touching
+  // Cycle through the touches to check if they interact with the player
+  // mobile controller
   for (var i = 0; i < touches.length; i++) {
+
     //check on which side of the screen is the touch
     //if it is on the left, analyze where it is on the left game pad
     if(touches[i].x < width/2){
@@ -64,6 +65,16 @@ PlayerMobile.prototype.playerController = function(){
       } else{
         this.upKeyPressed = false;
       }
+
+      //make both jump and shoot "false" if there is only one touch
+      //and it is situated on the left side of the canvas (since the following
+      //"else" statement will not be triggered if there is only one touch
+      // situated on the left side, thus there will be nothing to turn the
+      //shoot/jump keys to a "false" state)
+      if(touches.length === 1){
+        this.jumpKeyPressed = false;
+        this.shootKeyPressed = false;
+      }
     //if it is on the right, analyze if it touches the right buttons
     } else{
       //touching the jump key
@@ -79,6 +90,18 @@ PlayerMobile.prototype.playerController = function(){
       } else{
         this.shootKeyPressed = false;
       }
+
+      //make the direction keys "false" if there is only one touch
+      //and it is situated on the right side of the canvas (since the previous
+      //"if" statement will not be triggered if there is only one touch situated
+      // on the right side, thus there will be nothing to turn the direction
+      // keys to a "false" state)
+      if(touches.length === 1){
+        this.downKeyPressed = false;
+        this.upKeyPressed = false;
+        this.leftKeyPressed = false;
+        this.rightKeyPressed  = false;
+      }
     }
 
     //NOTE: the primary analysis of wether the touch was on the right or left
@@ -87,8 +110,8 @@ PlayerMobile.prototype.playerController = function(){
     //(since that touch is not situated on the left game pad)
   }
 
-  //the "for" loop is useless if there is no touch, thus we can not put the
-  //player propreties to "false" state. This will remedie to it.
+  //the previous "for" loop is useless if there is no touch, thus we can not
+  //put the player propreties to "false" state. This will remedie to it.
   if(touches.length === 0){
     this.downKeyPressed = false;
     this.upKeyPressed = false;

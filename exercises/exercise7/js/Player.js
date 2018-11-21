@@ -21,8 +21,8 @@ function Player(x,y) {
   this.upKey = 87; //W key
   this.leftKey = 65; //A key
   this.rightKey  = 68; //D key
-  this.jumpKey = 79; //O key
-  this.shootKey = 80; //P key
+  this.jumpKey = 80; //P key
+  this.shootKey = 79; //O key
   this.facingRight = true; //Check which side of canvas player is facing
   this.bulletArray = []; //An array containing bullets shot by player
   this.shot = false; //boolean showing if mouse press released a bullet
