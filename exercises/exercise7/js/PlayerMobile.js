@@ -34,57 +34,68 @@ PlayerMobile.prototype.playerController = function(){
   // The array length is dynamic and tied to the number of fingers
   // currently touching
   for (var i = 0; i < touches.length; i++) {
-    //touching the left side of the controller
-    if(touches[i].x < 130 && touches[i].x > 30 && touches[i].y > height-330 && touches[i].y < height-30 ){
-      this.leftKeyPressed = true;
+    //check on which side of the screen is the touch
+    //if it is on the left, analyze where it is on the left game pad
+    if(touches[i].x < width/2){
+      //touching the left side of the controller
+      if(touches[i].x < 130 && touches[i].x > 30 && touches[i].y > height-330 && touches[i].y < height-30 ){
+        this.leftKeyPressed = true;
+      } else{
+        this.leftKeyPressed = false;
+      }
+
+      //touching the right side of the controller
+      if(touches[i].x < 330 && touches[i].x > 230 && touches[i].y > height-330 && touches[i].y < height-30 ){
+        this.rightKeyPressed = true;
+      } else{
+        this.rightKeyPressed = false;
+      }
+
+      //touching the bottom side of the controller
+      if(touches[i].x < 330 && touches[i].x > 30 && touches[i].y > height-130 && touches[i].y < height-30 ){
+        this.downKeyPressed = true;
+      } else{
+        this.downKeyPressed = false;
+      }
+
+      //touching the top side of the controller
+      if(touches[i].x < 330 && touches[i].x > 30 && touches[i].y > height-330 && touches[i].y < height-30 ){
+        this.upKeyPressed = true;
+      } else{
+        this.upKeyPressed = false;
+      }
+    //if it is on the right, analyze if it touches the right buttons
     } else{
-      this.leftKeyPressed = false;
+      //touching the jump key
+      if(touches[i].x < width-130 && touches[i].x > width-230 && touches[i].y > height-130 && touches[i].y < height-30 ){
+        this.jumpKeyPressed = true;
+      } else{
+        this.jumpKeyPressed = false;
+      }
+
+      //touching the shoot key
+      if(touches[i].x < width-30 && touches[i].x > width-130 && touches[i].y > height-230 && touches[i].y < height-130 ){
+        this.shootKeyPressed = true;
+      } else{
+        this.shootKeyPressed = false;
+      }
     }
 
-    //touching the right side of the controller
-    if(touches[i].x < 330 && touches[i].x > 230 && touches[i].y > height-330 && touches[i].y < height-30 ){
-      this.rightKeyPressed = true;
-    } else{
-      this.rightKeyPressed = false;
-    }
-
-    //touching the bottom side of the controller
-    if(touches[i].x < 330 && touches[i].x > 30 && touches[i].y > height-130 && touches[i].y < height-30 ){
-      this.downKeyPressed = true;
-    } else{
-      this.downKeyPressed = false;
-    }
-
-    //touching the top side of the controller
-    if(touches[i].x < 330 && touches[i].x > 30 && touches[i].y > height-330 && touches[i].y < height-30 ){
-      this.upKeyPressed = true;
-    } else{
-      this.upKeyPressed = false;
-    }
-
-    //touching the jump key
-    if(touches[i].x < width-130 && touches[i].x > width-230 && touches[i].y > height-130 && touches[i].y < height-30 ){
-      this.jumpKeyPressed = true;
-    } else{
-      this.jumpKeyPressed = false;
-    }
-
-    //touching the jump key
-    if(touches[i].x < width-30 && touches[i].x > width-130 && touches[i].y > height-230 && touches[i].y < height-130 ){
-      this.shootKeyPressed = true;
-    } else{
-      this.shootKeyPressed = false;
-    }
-
+    //NOTE: the primary analysis of wether the touch was on the right or left
+    //of the canvas was done so that the touch on the right of the canvas will
+    //not put the movement keys (up/down/left/right) in a "false" state
+    //(since that touch is not situated on the left game pad)
   }
 
+  //the "for" loop is useless if there is no touch, thus we can not put the
+  //player propreties to "false" state. This will remedie to it.
   if(touches.length === 0){
-    this.downKeyPressed = false; //S key
-    this.upKeyPressed = false; //W key
-    this.leftKeyPressed = false; //A key
-    this.rightKeyPressed  = false; //D key
-    this.jumpKeyPressed = false; //O key
-    this.shootKeyPressed = false; //P key
+    this.downKeyPressed = false;
+    this.upKeyPressed = false;
+    this.leftKeyPressed = false;
+    this.rightKeyPressed  = false;
+    this.jumpKeyPressed = false;
+    this.shootKeyPressed = false;
   }
 }
 
