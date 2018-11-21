@@ -14,7 +14,7 @@ function PlayerMobile(x,y) {
   this.w = 20;
   this.h = 30;
   this.color = [0,0,0];
-  this.speed = 8;
+  this.speed = 5;
   this.jumping = false;
   this.jumpSpeed = 40; //speed upwards during jump
   this.downKeyPressed = false; //S key
@@ -34,12 +34,46 @@ PlayerMobile.prototype.playerController = function(){
   // The array length is dynamic and tied to the number of fingers
   // currently touching
   for (var i = 0; i < touches.length; i++) {
-    console.log("checking pression");
-    if(touches[i].x < 130 && touches[i].x > 30 && touches[i].y > height-280 && touches[i].y < height-130 ){
+    //touching the left side of the controller
+    if(touches[i].x < 130 && touches[i].x > 30 && touches[i].y > height-330 && touches[i].y < height-30 ){
       this.leftKeyPressed = true;
-      console.log("pressing left");
     } else{
       this.leftKeyPressed = false;
+    }
+
+    //touching the right side of the controller
+    if(touches[i].x < 330 && touches[i].x > 230 && touches[i].y > height-330 && touches[i].y < height-30 ){
+      this.rightKeyPressed = true;
+    } else{
+      this.rightKeyPressed = false;
+    }
+
+    //touching the bottom side of the controller
+    if(touches[i].x < 330 && touches[i].x > 30 && touches[i].y > height-130 && touches[i].y < height-30 ){
+      this.downKeyPressed = true;
+    } else{
+      this.downKeyPressed = false;
+    }
+
+    //touching the top side of the controller
+    if(touches[i].x < 330 && touches[i].x > 30 && touches[i].y > height-330 && touches[i].y < height-30 ){
+      this.upKeyPressed = true;
+    } else{
+      this.upKeyPressed = false;
+    }
+
+    //touching the jump key
+    if(touches[i].x < width-130 && touches[i].x > width-230 && touches[i].y > height-130 && touches[i].y < height-30 ){
+      this.jumpKeyPressed = true;
+    } else{
+      this.jumpKeyPressed = false;
+    }
+
+    //touching the jump key
+    if(touches[i].x < width-30 && touches[i].x > width-130 && touches[i].y > height-230 && touches[i].y < height-130 ){
+      this.shootKeyPressed = true;
+    } else{
+      this.shootKeyPressed = false;
     }
 
   }
@@ -58,10 +92,15 @@ PlayerMobile.prototype.drawControls = function(){
   push();
   noFill();
   stroke(0);
+  //left gamepad for movement
   ellipse(180,height-280, 100);
   ellipse(280,height-180, 100);
   ellipse(180,height-80, 100);
   ellipse(80,height-180, 100);
+
+  //right gamepad for jump and shoot
+  ellipse(width-180, height-80, 100);
+  ellipse(width-80, height-180, 100);
   pop();
 }
 
@@ -74,7 +113,7 @@ PlayerMobile.prototype.handleInputMove = function() {
     this.vx = -this.speed;
     this.facingRight = false;
   }
-  else if (keyIsDown(this.rightKey)) {
+  else if (this.rightKeyPressed) {
     this.vx = this.speed;
     this.facingRight = true;
   }
@@ -96,15 +135,15 @@ PlayerMobile.prototype.handleInputMove = function() {
 // appropriately
 PlayerMobile.prototype.handleInputJump = function() {
   //If upkey pressed and player is not jumping already
-  if (keyIsDown(this.jumpKey) && this.jumping === false) {
+  if (this.jumpKeyPressed && this.jumping === false) {
     this.vy = -this.jumpSpeed; //upwards velocity
     this.jumping = true; //jumping state becomes true
   }
   //Quickly releasing the key after pressing it does a smaller jump
   //If player released up key and player is still in mid air
-  if(!keyIsDown(this.jumpKey) && this.jumping === true){
-    this.vy += 4; //force the player down faster ("increased gravity")
-  }
+  // if(!keyIsDown(this.jumpKey) && this.jumping === true){
+  //   this.vy += 4; //force the player down faster ("increased gravity")
+  // }
 
 }
 
@@ -113,7 +152,7 @@ PlayerMobile.prototype.handleInputJump = function() {
 // Check if the crouch (down) key is pressed and change player size accordingly
 PlayerMobile.prototype.handleInputCrouch = function() {
   //If downKey pressed and player is not jumping
-  if (keyIsDown(this.downKey) && this.jumping === false) {
+  if (this.downKeyPressed && this.jumping === false) {
     this.h = 20;
   } else{
     this.h = 30;
@@ -146,7 +185,7 @@ PlayerMobile.prototype.update = function() {
     //Once the player releases the "jump" key after a jump
     //allow player to make subsequent jump by changing jumping state to false
     //Otherwise the player will do multiple jumps if "jump" key remains pushed down
-    if(!keyIsDown(this.jumpKey)){
+    if(!this.jumpKeyPressed){
       this.jumping = false;
     }
   }
@@ -173,33 +212,16 @@ PlayerMobile.prototype.display = function() {
 }
 
 PlayerMobile.prototype.shoot = function() {
-  // //angle between player center and mouse
-  // var angle = atan((this.y - mouseY)/( this.x - mouseX));
-  //
-  // //If player presses mouse and player is not currently shooting
-  // if(mouseIsPressed && this.shot === false){
-  //   //create a new bullet and push it into the array
-  //   this.bulletArray.push(new Bullet(this.x, this.y, angle));
-  //   console.log(angle);
-  //   //Change shooting state
-  //   this.shot = true;
-  // }
-  //
-  // //Player allowed to shoot another bullet only when releases the mouse
-  // if(!mouseIsPressed){
-  //   this.shot = false;
-  // }
-
   //check state of player
-  if(keyIsDown(this.shootKey) && this.shot === false){
+  if(this.shootKeyPressed && this.shot === false){
       //create a new bullet and push it into the array
-      this.bulletArray.push(new Bullet(this.x, this.y, this.facingRight, keyIsDown(this.upKey)));
+      this.bulletArray.push(new Bullet(this.x, this.y, this.facingRight, this.upKeyPressed));
       //Change shooting state
       this.shot = true;
   }
 
   //Player allowed to shoot another bullet only when releases the mouse
-  if(!keyIsDown(this.shootKey)){
+  if(!this.shootKeyPressed){
     this.shot = false;
   }
 }
