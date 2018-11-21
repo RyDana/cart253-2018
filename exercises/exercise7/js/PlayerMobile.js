@@ -60,7 +60,7 @@ PlayerMobile.prototype.playerController = function(){
       }
 
       //touching the top side of the controller
-      if(touches[i].x < 330 && touches[i].x > 30 && touches[i].y > height-330 && touches[i].y < height-30 ){
+      if(touches[i].x < 330 && touches[i].x > 30 && touches[i].y > height-330 && touches[i].y < height- 230 ){
         this.upKeyPressed = true;
       } else{
         this.upKeyPressed = false;
