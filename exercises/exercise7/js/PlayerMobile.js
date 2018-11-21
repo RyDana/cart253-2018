@@ -1,7 +1,7 @@
 // PlayerMobile
 //
-// A class that defines how a player behaves, including the ability
-// to specify the input keys to move it
+// A class that defines how a player behaves using a touch-based
+// game controller defined in this class as well.
 
 // Player constructor
 //
@@ -122,6 +122,9 @@ PlayerMobile.prototype.playerController = function(){
   }
 }
 
+//drawControls()
+//
+//Draws the outline of up/down/left/right/shoot/jump buttons
 PlayerMobile.prototype.drawControls = function(){
   push();
   noFill();

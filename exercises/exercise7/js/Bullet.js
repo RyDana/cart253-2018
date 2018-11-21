@@ -21,21 +21,24 @@ function Bullet(x,y,facingRight,pointingUp) {
 
 // update()
 //
-// Update position based on velocity and angle
+// Update position based on velocity and direction
 Bullet.prototype.update = function() {
-  //
+  //this was used when user controlled bullet with mouse click
   // this.vy = this.speed * sin(this.angle);
   // this.y += this.vy;
   //
   // this.vx = this.speed * cos(this.angle);
   // this.x += this.vx;
 
+  //bullet moves upwards if player was pointing up
   if(this.pointingUp){
     this.vy = -this.speed;
   }else{
     this.vy = 0;
   }
 
+  //bullet moves either right or left, depending which side player was facing
+  //when bullet was shot
   if(this.facingRight){
     this.vx = this.speed;
   }else{
