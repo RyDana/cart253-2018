@@ -111,6 +111,13 @@ function draw() {
     }
 
   }
+
+  if(isFullScreen){
+    drawExitFullscreenLogo();
+  } else{
+    drawFullscreenLogo();
+  }
+
   //TODO: put game to fullscreen at least on Mobile
   //TODO: make touch controls smaller
   //TODO: enemies!
@@ -150,12 +157,31 @@ function recreateCanvasOnMobile(){
   }
 }
 
+function drawFullscreenLogo(){
+  push();
+  stroke(0);
+  noFill();
+  rect(width - 30, 30, 20, 20);
+  pop();
+}
+
+function drawExitFullscreenLogo(){
+  push();
+  stroke(0);
+  noFill();
+  rect(width - 30, 30, 20, 20);
+  text("x",width - 30, 30,)
+  pop();
+}
+
 function mousePressed() {
-  if(mouseX <width && mouseX > width*2/3 && mouseY > 0 && mouseY < height/4){
+  if(mouseX < width && mouseX > width - 40 && mouseY > 0 && mouseY < height + 40){
     // When the mouse is pressed we toggle the variable tracking fullscreen
     isFullScreen = !isFullScreen;
     // And set fullscreen to the result
     fullscreen(isFullScreen);
+
+    recreateCanvasOnMobile();
   }
 
   // Now we calculate the desired height of the canvas based on whether we're
