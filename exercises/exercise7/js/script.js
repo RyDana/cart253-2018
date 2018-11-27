@@ -17,6 +17,8 @@ var isFullScreen = false;
 var canvasRatio;
 // Track the canvas element
 var canvas;
+//counting the double click on fullscreen icon
+var fullscreenClickCount = 0;
 
 //Sounds
 var beepSound;
@@ -161,7 +163,7 @@ function drawFullscreenLogo(){
   push();
   stroke(0);
   noFill();
-  rect(width - 30, 30, 20, 20);
+  rect(30, 30, 20, 20);
   pop();
 }
 
@@ -169,33 +171,37 @@ function drawExitFullscreenLogo(){
   push();
   stroke(0);
   noFill();
-  rect(width - 30, 30, 20, 20);
-  text("x",width - 30, 30,)
+  rect(30, 30, 20, 20);
+  text("x",30, 30,)
   pop();
 }
 
 function mousePressed() {
-  if(mouseX < width && mouseX > width - 40 && mouseY > 0 && mouseY < height + 40){
+  if(mouseX < 40 && mouseX > 0 && mouseY > 0 && mouseY < 40){
     // When the mouse is pressed we toggle the variable tracking fullscreen
     isFullScreen = !isFullScreen;
     // And set fullscreen to the result
     fullscreen(isFullScreen);
 
-    recreateCanvasOnMobile();
-  }
+    //recreate canvas on mobile
+    if(onMobile){
+      createCanvas(window.innerWidth,window.innerHeight);
+    }
 
-  // Now we calculate the desired height of the canvas based on whether we're
-  // in fullscreen (and want displayHeight) or not (and want the regular height)
-  // var newHeight = 0;
-  // if (isFullScreen) {
-  //   newHeight = displayHeight;
-  // }
-  // else {
-  //   newHeight = height;
-  // }
-  // Finally, using p5.dom's style() method we set the height and width of the
-  // canvas element to the new height
-  // canvas.style("height:" + newHeight + "px");
-  // And we calculate and set the width based on the ratio
-  // canvas.style("width:" + newHeight * canvasRatio + "px");
+
+    // // Now we calculate the desired height of the canvas based on whether we're
+    // // in fullscreen (and want displayHeight) or not (and want the regular height)
+    // var newHeight = 0;
+    // if (isFullScreen) {
+    //   newHeight = displayHeight;
+    // }
+    // else {
+    //   newHeight = height;
+    // }
+    // // Finally, using p5.dom's style() method we set the height and width of the
+    // // canvas element to the new height
+    // canvas.style("height:" + newHeight + "px");
+    // // And we calculate and set the width based on the ratio
+    // canvas.style("width:" + newHeight * canvasRatio + "px");
+  }
 }
