@@ -35,6 +35,15 @@ function Paddle(x,y,w,h,speed,downKey,upKey,smallPaddleOffset) {
   this.disadvantageTimer = 300;
   this.maxDisadvantageTime = 300;
 
+  //Allows the enemy to shoot for a certain time
+  this.canShoot = false;
+  this.timeBetweenBullets = 0;
+  this.justShot = false;
+  this.canShootTimer = 300;
+  this.bulletArray = [];
+
+
+
 }
 
 // handleInput()
@@ -101,6 +110,8 @@ Paddle.prototype.scored = function() {
   //or "leveling up" sound every 3 points scored
   if (this.score%3 === 0){
     levelUpSound.play();
+    //allows player to shoot
+    this.canShoot = true;
   } else {
     pointSound.play();
   }
@@ -241,5 +252,26 @@ Paddle.prototype.reset = function(){
   this.animationTime = 0; //timer for animation once player scored
   this.wasHit = false; //detection of paddle hit by enemy ball
   this.disadvantageTimer = this.maxDisadvantageTime; //timer for paddle being in disadvantage
+
+}
+
+Paddle.prototype.shoot = function(xDirection){
+  if(this.canShoot){
+    if (this.canShootTimer === 0){
+      this.canShoot = false;
+      this.canShootTimer = 300;
+    } else{
+      if(keyIsDown(88)){
+        if(timeBetweenBullets === 0){
+          this.timeBetweenBullets--;
+        } else{
+          bulletArray.push(new Bullet(this.x, this.y,xDirenction));
+          this.justShot = true;
+        }
+
+      }
+
+    }
+  }
 
 }

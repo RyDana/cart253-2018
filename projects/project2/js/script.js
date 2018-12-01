@@ -97,10 +97,11 @@ function setup() {
   createCanvas(1280,480);
   rectMode(CENTER);
   noStroke();
+  ////////NEW////////
   // Create a ball
   ball = new Ball(width/2,height/2,5,5,10,5);
+  //Put it into the array
   ballArray.push(ball);
-  ////////NEW////////
   //Create enemy ball
   enemyBall = new EnemyBall(width/2,height/2,-5,-5,10,5);
   //Create ball ball Multiplier
