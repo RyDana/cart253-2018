@@ -72,23 +72,27 @@ function setup() {
 // Calls the appropriate functions to run the game
 function draw() {
   //Asks user to put phone in ladscape mode if user on a phone
-  if (onMobile && !gameIsSet){
-    if (!isFullScreen) {
-      background(0, 216, 255, 100);
-      text(putToFulscreen, width/2, height/2);
-      if(mouseIsPressed){
-        // When the mouse is pressed we toggle the variable tracking fullscreen
-        isFullScreen = !isFullScreen;
-        // And set fullscreen to the result
-        fullscreen(isFullScreen);
-      }
-    } else if(window.innerWidth < window.innerHeight){
-      background(0, 216, 255, 100);
-      text(putToLandscape, width/2, height/2);
-    } else{
-      gameIsSet = true;
-    }
-  } else{
+  if(onMobile && window.innerWidth < window.innerHeight && !rotationDetected){
+    text(putToLandscape, width/2, height/2);
+  }
+  // if (onMobile && !gameIsSet){
+  //   if (!isFullScreen) {
+  //     background(0, 216, 255, 100);
+  //     text(putToFulscreen, width/2, height/2);
+  //     if(mouseIsPressed){
+  //       // When the mouse is pressed we toggle the variable tracking fullscreen
+  //       isFullScreen = !isFullScreen;
+  //       // And set fullscreen to the result
+  //       fullscreen(isFullScreen);
+  //     }
+  //   } else if(window.innerWidth < window.innerHeight){
+  //     background(0, 216, 255, 100);
+  //     text(putToLandscape, width/2, height/2);
+  //   } else{
+  //     gameIsSet = true;
+  //   }
+  // }
+  else{
     //recreate canvas to fit mobile device once rotated (called once)
     if(!canvasCreated){
       recreateCanvasOnMobile();
@@ -169,7 +173,6 @@ function recreateCanvasOnMobile(){
   if(onMobile){
     createCanvas(window.innerWidth,window.innerHeight);
 
-
     //do not ask to rotate the sceen again
     rotationDetected = true;
   }
@@ -193,31 +196,29 @@ function drawExitFullscreenLogo(){
 }
 
 function mousePressed() {
-  if(mouseX < 40 && mouseX > 0 && mouseY > 0 && mouseY < 40){
+  if(mouseX < 80 && mouseX > 0 && mouseY > 0 && mouseY < 80){
     // When the mouse is pressed we toggle the variable tracking fullscreen
     isFullScreen = !isFullScreen;
     // And set fullscreen to the result
     fullscreen(isFullScreen);
 
-    // //recreate canvas on mobile
-    // if(onMobile){
-    //   createCanvas(window.innerWidth,window.innerHeight);
-    // }
-
-
-    // // Now we calculate the desired height of the canvas based on whether we're
-    // // in fullscreen (and want displayHeight) or not (and want the regular height)
-    // var newHeight = 0;
-    // if (isFullScreen) {
-    //   newHeight = displayHeight;
-    // }
-    // else {
-    //   newHeight = height;
-    // }
-    // // Finally, using p5.dom's style() method we set the height and width of the
-    // // canvas element to the new height
-    // canvas.style("height:" + newHeight + "px");
-    // // And we calculate and set the width based on the ratio
-    // canvas.style("width:" + newHeight * canvasRatio + "px");
+  //   // Now we calculate the desired height of the canvas based on whether we're
+  //   // in fullscreen (and want displayHeight) or not (and want the regular height)
+  //   var newHeight = 0;
+  //   if (isFullScreen) {
+  //     newHeight = displayHeight;
+  //   }
+  //   else {
+  //     newHeight = height;
+  //   }
+  //   // Finally, using p5.dom's style() method we set the height and width of the
+  //   // canvas element to the new height
+  //   canvas.style("height:" + newHeight + "px");
+  //   // And we calculate and set the width based on the ratio
+  //   canvas.style("width:" + newHeight * canvasRatio + "px");
   }
 }
+
+// function windowResized(){
+//
+// }
