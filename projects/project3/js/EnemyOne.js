@@ -23,6 +23,7 @@ function EnemyOne(x,y) {
   this.bulletArray = []; //An array containing bullets shot by player
   this.bulletSpeed = 5;
   this.bulletSize = 10;
+  this.bulletColor = [247, 173, 61];
   this.bulletsShot = 0;
   this.shot = false; //boolean showing if mouse press released a bullet
 }
@@ -49,7 +50,7 @@ EnemyOne.prototype.update = function(playerX){
   } else{
     if(this.timer%40 ===0 && this.bulletsShot < 2){
         this.bulletArray.push(new Bullet(this.x, this.y, this.facingRight, false,
-        this.bulletSpeed, this.bulletSize));
+        this.bulletSpeed, this.bulletSize, this.bulletColor));
       this.bulletsShot++;
     }
     this.vx = 0;
@@ -138,18 +139,28 @@ EnemyOne.prototype.displayBullets = function (){
   }
 }
 
-EnemyOne.prototype.handleBulletCollision = function(enemy){
+EnemyOne.prototype.handleBulletCollision = function(player){
   if(this.bulletArray.length > 0){
     for(i = this.bulletArray.length -1; i >=0; i--){
-      if(this.bulletArray[i].x + this.bulletArray[i].w/2 > enemy.x - enemy.w/2
-        && this.bulletArray[i].x - this.bulletArray[i].w/2 < enemy.x + enemy.w/2){
-          if(this.bulletArray[i].y + this.bulletArray[i].w/2 > enemy.y - enemy.h/2
-            && this.bulletArray[i].y - this.bulletArray[i].w/2 < enemy.y + enemy.h/2){
+      if(this.bulletArray[i].x + this.bulletArray[i].w/2 > player.x - player.w/2
+        && this.bulletArray[i].x - this.bulletArray[i].w/2 < player.x + player.w/2){
+          if(this.bulletArray[i].y + this.bulletArray[i].w/2 > player.y - player.h/2
+            && this.bulletArray[i].y - this.bulletArray[i].w/2 < player.y + player.h/2){
               this.bulletArray.splice(i, 1);
-              enemy.life -=2;
+              player.life -= 5;
               // console.log(enemy.life);
           }
       }
     }
   }
+}
+
+EnemyOne.prototype.displayLifeBar = function(){
+  push();
+  fill(255,0,0);
+  var barLength = map(constrain(this.life, 0,100), 0,100, 0, width/2-150);
+  rect(width-90-barLength/2, 46, barLength, 20, 10 );
+  imageMode(CENTER);
+  image(enemyOneFace, width-46, 46);
+  pop();
 }

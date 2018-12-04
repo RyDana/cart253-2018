@@ -12,7 +12,7 @@ function Player(x,y) {
   this.vx = 0;
   this.vy = 0;
   this.w = 20;
-  this.h = 30;
+  this.h = 32;
   this.life = 100;
   this.color = [0,0,0];
   this.speed = 3;
@@ -26,12 +26,21 @@ function Player(x,y) {
   this.jumpKey = 80; //P key
   this.shootKey = 79; //O key
   this.facingRight = true; //Check which side of canvas player is facing
+  this.lookingUp = false;
   this.bulletArray = []; //An array containing bullets shot by player
   this.bulletSpeed = 10;
   this.bulletSize = 5;
+  this.bulletColor= [255, 24, 238];
   this.shot = false; //boolean showing if mouse press released a bullet
 }
 
+Player.prototype.handleInputUp = function(){
+  if(keyIsDown(this.upKey)){
+    this.lookingUp = true;
+  } else{
+    this.lookingUp = false;
+  }
+}
 // handleInputMove()
 //
 // Check if the left or right keys are pressed and update velocity
@@ -81,9 +90,9 @@ Player.prototype.handleInputJump = function() {
 Player.prototype.handleInputCrouch = function() {
   //If downKey pressed and player is not jumping
   if (keyIsDown(this.downKey) && this.jumping === false) {
-    this.h = 20;
+    this.h = 26;
   } else{
-    this.h = 30;
+    this.h = 32;
   }
 
 }
@@ -138,25 +147,96 @@ Player.prototype.display = function() {
   // }
   // pop();
   //animate the sprite sheet
-  if(this.y + this.h/2 !== height){
-    if(this.facingRight){
-      animation(jumpingRightAnimation, this.x, this.y);
-    }
-    else{
-      animation(jumpingLeftAnimation, this.x, this.y);
-    }
+  if(this.lookingUp){
+    if(this.h < 32){
+      if(this.vx === 0){
+        if(this.facingRight){
+          push();
+          imageMode(CENTER);
+          image(upCrouchRight, this.x, this.y);
+          pop();
+        }
+        else{
+          push();
+          imageMode(CENTER);
+          image(upCrouchLeft, this.x, this.y);
+          pop();
+        }
+      } else{
+        if(this.facingRight){
+          animation(upCrouchRightAnimation, this.x, this.y);
+        }
+        else{
+          animation(upCrouchLeftAnimation, this.x, this.y);
+        }
+      }
 
-  }
-  else if(this.vx>0){
-    animation(runningRightAnimation, this.x, this.y);
-  }
-  else if(this.vx<0){
-    animation(runningLeftAnimation, this.x, this.y);
-  }
-  else if(this.facingRight){
-    animation(standingRightAnimation, this.x, this.y);
-  } else{
-    animation(standingLeftAnimation, this.x, this.y);
+    }
+    else if(this.y + this.h/2 !== height){
+      if(this.facingRight){
+        animation(jumpingRightAnimation, this.x, this.y);
+      }
+      else{
+        animation(jumpingLeftAnimation, this.x, this.y);
+      }
+
+    }
+    else if(this.vx>0){
+      animation(upRunningRightAnimation, this.x, this.y);
+    }
+    else if(this.vx<0){
+      animation(upRunningLeftAnimation, this.x, this.y);
+    }
+    else if(this.facingRight){
+      animation(upStandingRightAnimation, this.x, this.y);
+    } else{
+      animation(upStandingLeftAnimation, this.x, this.y);
+    }
+  } else {
+    if(this.h < 32){
+      if(this.vx === 0){
+        if(this.facingRight){
+          push();
+          imageMode(CENTER);
+          image(crouchRight, this.x, this.y);
+          pop();
+        }
+        else{
+          push();
+          imageMode(CENTER);
+          image(crouchLeft, this.x, this.y);
+          pop();
+        }
+      } else{
+        if(this.facingRight){
+          animation(crouchRightAnimation, this.x, this.y);
+        }
+        else{
+          animation(crouchLeftAnimation, this.x, this.y);
+        }
+      }
+
+    }
+    else if(this.y + this.h/2 !== height){
+      if(this.facingRight){
+        animation(jumpingRightAnimation, this.x, this.y);
+      }
+      else{
+        animation(jumpingLeftAnimation, this.x, this.y);
+      }
+
+    }
+    else if(this.vx>0){
+      animation(runningRightAnimation, this.x, this.y);
+    }
+    else if(this.vx<0){
+      animation(runningLeftAnimation, this.x, this.y);
+    }
+    else if(this.facingRight){
+      animation(standingRightAnimation, this.x, this.y);
+    } else{
+      animation(standingLeftAnimation, this.x, this.y);
+    }
   }
 
 }
@@ -183,7 +263,7 @@ Player.prototype.shoot = function() {
   if(keyIsDown(this.shootKey) && this.shot === false){
       //create a new bullet and push it into the array
       this.bulletArray.push(new Bullet(this.x, this.y, this.facingRight,
-        keyIsDown(this.upKey),this.bulletSpeed, this.bulletSize));
+        keyIsDown(this.upKey),this.bulletSpeed, this.bulletSize, this.bulletColor));
       //Change shooting state
       this.shot = true;
   }
@@ -246,11 +326,21 @@ Player.prototype.handleEnemyCollision = function(enemy){
     &&this.y + this.w/2 > enemy.y - enemy.h/2
     && this.y - this.w/2 < enemy.y + enemy.h/2){
       if(!this.touchingEnemy){
-        this.life -=2;
+        this.life -=8;
         this.touchingEnemy = true;
         console.log(this.life);
       }
   }else{
     this.touchingEnemy = false;
   }
+}
+
+Player.prototype.displayLifeBar = function(){
+  push();
+  fill(0,255,0);
+  var barLength = map(constrain(this.life, 0,100), 0,100, 0, width/2-150);
+  rect(90+barLength/2, 46, barLength, 20, 10 );
+  imageMode(CENTER);
+  image(playerFace, 46, 46);
+  pop();
 }

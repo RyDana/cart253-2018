@@ -5,14 +5,14 @@
 // Bullet constructor
 //
 // Sets the properties with the provided arguments or defaults
-function Bullet(x,y,facingRight,pointingUp,bulletSpeed,bulletSize) {
+function Bullet(x,y,facingRight,pointingUp,bulletSpeed,bulletSize, color) {
   this.x = x;
   this.y = y;
   //this.angle = angle; //angle at which bullet travels
   this.vx = 0;
   this.vy = 0;
   this.w = bulletSize; //size
-  this.color = [255, 24, 238];
+  this.color = color;
   this.speed = bulletSpeed;
   this.facingRight = facingRight;
   this.pointingUp = pointingUp;

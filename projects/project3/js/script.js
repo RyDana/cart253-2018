@@ -20,16 +20,35 @@ var beepSound;
 //sprite
 var spriteSheet;
 
-//animations
+//player animations
 var standingLeftAnimation;
 var standingRightAnimation;
 var runningLeftAnimation;
 var runningRightAnimation;
 var jumpingRightAnimation;
+var jumpingleftAnimation;
+var crouchRightAnimation;
+var crouchLeftAnimation;
+
+var upStandingLeftAnimation;
+var upStandingRightAnimation;
+var upRunningLeftAnimation;
+var upRunningRightAnimation;
+var upCrouchRightAnimation;
+var upCrouchLeftAnimation;
+
+//player images
+var playerFace;
+var crouchRight;
+var crouchLeft;
+var upCrouchRight;
+var upCrouchLeft;
 
 //Enemy Animations
 var enemOneStandingLeftAnimation;
 var enemOneStandingRightAnimation;
+//enemy images
+var enemyOneFace;
 
 //player
 var player;
@@ -59,25 +78,68 @@ function preload() {
   runningRightAnimation = loadAnimation(
     'assets/images/playerRunningRight/player_running_right00.png',
     'assets/images/playerRunningRight/player_running_right09.png'
-  )
+  );
 
   runningLeftAnimation = loadAnimation(
     'assets/images/playerRunningLeft/player_running_left00.png',
     'assets/images/playerRunningLeft/player_running_left09.png'
-  )
+  );
 
   jumpingRightAnimation = loadAnimation(
     'assets/images/playerJumpingUp/player_jumping_up0.png',
     'assets/images/playerJumpingUp/player_jumping_up6.png'
-  )
+  );
 
   jumpingLeftAnimation = loadAnimation(
     'assets/images/playerJumpingLeft/player_jumping_left0.png',
     'assets/images/playerJumpingLeft/player_jumping_left6.png'
-  )
+  );
 
   jumpingRightAnimation.looping = false;
   jumpingLeftAnimation.looping = false;
+
+  crouchLeftAnimation = loadAnimation(
+    'assets/images/playerCrouchWalkingLeft/player_crouch_walking_left0.png',
+    'assets/images/playerCrouchWalkingLeft/player_crouch_walking_left7.png'
+  );
+
+  crouchRightAnimation = loadAnimation(
+    'assets/images/playerCrouchWalkingRight/player_crouch_walking_right0.png',
+    'assets/images/playerCrouchWalkingRight/player_crouch_walking_right7.png'
+  );
+
+  upStandingLeftAnimation = loadAnimation(
+    'assets/images/upPlayerStandingLeft/up_player_standing_left0.png',
+    'assets/images/upPlayerStandingLeft/up_player_standing_left7.png'
+    );
+
+  upStandingRightAnimation = loadAnimation(
+    'assets/images/upPlayerStandingRight/up_player_standing_right0.png',
+    'assets/images/upPlayerStandingRight/up_player_standing_right7.png'
+  );
+
+  upRunningLeftAnimation = loadAnimation(
+    'assets/images/upPlayerRunningLeft/up_running_left00.png',
+    'assets/images/upPlayerRunningLeft/up_running_left09.png'
+  );
+
+  upRunningRightAnimation = loadAnimation(
+    'assets/images/upPlayerRunningRight/ip_player_running_right00.png',
+    'assets/images/upPlayerRunningRight/ip_player_running_right09.png'
+  );
+
+  upCrouchRightAnimation = loadAnimation(
+    'assets/images/upPlayerCrouchWalkingRight/up_crouch_walking_right0.png',
+    'assets/images/upPlayerCrouchWalkingRight/up_crouch_walking_right7.png',
+  );
+
+  upCrouchLeftAnimation = loadAnimation(
+    'assets/images/upPlayerCrouchWalkingLeft/up_crouch_walking_left0.png',
+    'assets/images/upPlayerCrouchWalkingLeft/up_crouch_walking_left7.png',
+  );
+
+
+
 
   enemOneStandingLeftAnimation = loadAnimation(
     'assets/images/MonsterOneStandingLeft/monsterOne_standing_left0.png',
@@ -88,6 +150,15 @@ function preload() {
     'assets/images/MonsterOneStandingRight/monsterOne_standing_right0.png',
     'assets/images/MonsterOneStandingRight/monsterOne_standing_right7.png'
   );
+
+  enemyOneFace = loadImage('assets/images/enemyOne_face.png');
+
+
+  playerFace = loadImage('assets/images/player_face.png');
+  crouchRight = loadImage('assets/images/player_crouch_right.png');
+  crouchLeft = loadImage('assets/images/player_crouch_left.png');
+  upCrouchRight = loadImage('assets/images/upPlayerCrouchWalkingRight/up_crouch_walking_right0.png');
+  upCrouchLeft = loadImage('assets/images/upPlayerCrouchWalkingLeft/up_crouch_walking_left0.png');
 
   //detecting if user is on a phone (implying possibility for touch)
   detectPhone();
@@ -143,7 +214,7 @@ function draw() {
     if(onMobile){
       background(0, 216, 255, 100);
     }else{
-      background(155);
+      background(0);
     }
 
     //analyse touch inputs and convert them to player controls if on mobile
@@ -154,6 +225,7 @@ function draw() {
     player.handleInputMove();
     player.handleInputJump();
     player.handleInputCrouch();
+    player.handleInputUp();
     player.shoot();
 
     player.handleBulletCollision(enemyOne);
@@ -171,6 +243,9 @@ function draw() {
     enemyOne.displayBullets();
     player.display();
     player.displayBullets();
+
+    enemyOne.displayLifeBar();
+    player.displayLifeBar();
 
     //display controller if on mobile
     if(onMobile){
