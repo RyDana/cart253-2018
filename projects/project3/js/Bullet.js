@@ -5,15 +5,15 @@
 // Bullet constructor
 //
 // Sets the properties with the provided arguments or defaults
-function Bullet(x,y,facingRight,pointingUp) {
+function Bullet(x,y,facingRight,pointingUp,bulletSpeed,bulletSize) {
   this.x = x;
   this.y = y;
   //this.angle = angle; //angle at which bullet travels
   this.vx = 0;
   this.vy = 0;
-  this.w = 5; //size
+  this.w = bulletSize; //size
   this.color = [255, 24, 238];
-  this.speed = 10;
+  this.speed = bulletSpeed;
   this.facingRight = facingRight;
   this.pointingUp = pointingUp;
 }
@@ -58,4 +58,15 @@ Bullet.prototype.display = function() {
   fill(this.color[0], this.color[1],this.color[2]); //pink
   ellipse(this.x, this.y, this.w);
   pop();
+}
+
+// outOfCanvas()
+//
+// Draw the bullet as an ellipse
+Bullet.prototype.outOfCanvas = function() {
+  if(this.x - this.w/2 > width || this.x + this.w/2 < 0){
+    return true;
+  } else{
+    return false;
+  }
 }

@@ -26,6 +26,8 @@ function Player(x,y) {
   this.shootKey = 79; //O key
   this.facingRight = true; //Check which side of canvas player is facing
   this.bulletArray = []; //An array containing bullets shot by player
+  this.bulletSpeed = 10;
+  this.bulletSize = 5;
   this.shot = false; //boolean showing if mouse press released a bullet
 }
 
@@ -124,37 +126,37 @@ Player.prototype.update = function() {
 //
 // Draw the player as a rectangle on the screen with a little ellipse as an eye
 Player.prototype.display = function() {
-  // push();
-  // fill(this.color[0], this.color[1],this.color[2]); //black
-  // rect(this.x,this.y,this.w,this.h, this.r);
-  // fill(255); // white
-  // if(this.facingRight){
-  //   ellipse(this.x + this.w/4, this.y - this.h/2 + 5, 5);
-  // } else{
-  //   ellipse(this.x - this.w/4, this.y - this.h/2 + 5, 5);
-  // }
-  // pop();
-  // animate the sprite sheet
-  if(this.y + this.h/2 !== height){
-    if(this.facingRight){
-      animation(jumpingRightAnimation, this.x, this.y);
-    }
-    else{
-      animation(jumpingLeftAnimation, this.x, this.y);
-    }
-
-  }
-  else if(this.vx>0){
-    animation(runningRightAnimation, this.x, this.y);
-  }
-  else if(this.vx<0){
-    animation(runningLeftAnimation, this.x, this.y);
-  }
-  else if(this.facingRight){
-    animation(standingRightAnimation, this.x, this.y);
+  push();
+  fill(this.color[0], this.color[1],this.color[2]); //black
+  rect(this.x,this.y,this.w,this.h, this.r);
+  fill(255); // white
+  if(this.facingRight){
+    ellipse(this.x + this.w/4, this.y - this.h/2 + 5, 5);
   } else{
-    animation(standingLeftAnimation, this.x, this.y);
+    ellipse(this.x - this.w/4, this.y - this.h/2 + 5, 5);
   }
+  pop();
+  // animate the sprite sheet
+  // if(this.y + this.h/2 !== height){
+  //   if(this.facingRight){
+  //     animation(jumpingRightAnimation, this.x, this.y);
+  //   }
+  //   else{
+  //     animation(jumpingLeftAnimation, this.x, this.y);
+  //   }
+  //
+  // }
+  // else if(this.vx>0){
+  //   animation(runningRightAnimation, this.x, this.y);
+  // }
+  // else if(this.vx<0){
+  //   animation(runningLeftAnimation, this.x, this.y);
+  // }
+  // else if(this.facingRight){
+  //   animation(standingRightAnimation, this.x, this.y);
+  // } else{
+  //   animation(standingLeftAnimation, this.x, this.y);
+  // }
 
 }
 
@@ -179,7 +181,8 @@ Player.prototype.shoot = function() {
   //check state of player
   if(keyIsDown(this.shootKey) && this.shot === false){
       //create a new bullet and push it into the array
-      this.bulletArray.push(new Bullet(this.x, this.y, this.facingRight, keyIsDown(this.upKey)));
+      this.bulletArray.push(new Bullet(this.x, this.y, this.facingRight,
+        keyIsDown(this.upKey),this.bulletSpeed, this.bulletSize));
       //Change shooting state
       this.shot = true;
   }
@@ -198,6 +201,12 @@ Player.prototype.updateBullets = function (){
   if(this.bulletArray.length > 0){
     for(i = 0; i < this.bulletArray.length; i++){
       this.bulletArray[i].update();
+    }
+
+    for(var j = this.bulletArray.length - 1; j >= 0; j--) {
+      if(this.bulletArray[j].outOfCanvas()) {
+         this.bulletArray.splice(j, 1);
+      }
     }
   }
 

@@ -30,6 +30,9 @@ var jumpingRightAnimation;
 //player
 var player;
 
+//enemies
+var enemyOne;
+
 
 //text
 var putToLandscape = "Turn your screen to \n landscape mode";
@@ -93,6 +96,8 @@ function setup() {
     canvas = createCanvas(1280,480);
     //Create Player using Player constructor (for keyboard capabilities)
     player = new Player(width/2, height/2);
+
+    enemyOne = new EnemyOne(width/4, height/2);
   }
 
   rectMode(CENTER);
@@ -138,10 +143,14 @@ function draw() {
     player.shoot();
 
     //Updates player and bullets shot
+    enemyOne.update(player.x);
+    enemyOne.updateBullets();
     player.update();
     player.updateBullets();
 
     //Displays player and bullets shot
+    enemyOne.display();
+    enemyOne.displayBullets();
     player.display();
     player.displayBullets();
 
@@ -151,18 +160,12 @@ function draw() {
     }
 
   }
-
-  //TODO: put game to fullscreen at least on Mobile
-  //TODO: make touch controls smaller
-  //TODO: enemies!
-
 }
 
 //detectPhone()
 //
 //Functions detecting if player is on mobile
-function detectPhone()
-{
+function detectPhone(){
    if (/Android|iPhone|iPad|iPod|IEMobile|Windows Phone/i.test(navigator.userAgent)){
      //alert('true: ' + navigator.userAgent);
       onMobile = true;
