@@ -13,10 +13,11 @@ function Player(x,y) {
   this.vy = 0;
   this.w = 20;
   this.h = 30;
+  this.life = 100;
   this.color = [0,0,0];
-  this.speed = 8;
+  this.speed = 3;
   this.jumping = false;
-  this.jumpSpeed = 40; //speed upwards during jump
+  this.jumpSpeed = 15; //speed upwards during jump
   this.downKey = 83; //S key
   this.upKey = 87; //W key
   this.leftKey = 65; //A key
@@ -65,9 +66,9 @@ Player.prototype.handleInputJump = function() {
   }
   //Quickly releasing the key after pressing it does a smaller jump
   //If player released up key and player is still in mid air
-  if(!keyIsDown(this.jumpKey) && this.jumping === true){
-    this.vy += 4; //force the player down faster ("increased gravity")
-  }
+  // if(!keyIsDown(this.jumpKey) && this.jumping === true){
+  //   this.vy += 4; //force the player down faster ("increased gravity")
+  // }
 
 }
 
@@ -91,10 +92,10 @@ Player.prototype.update = function() {
   // After Player reaches the peak of the jump (falls down)
   //"increase gravity" to make the player fall down faster
   if(this.vy < 0){
-    this.vy += 4;
+    this.vy += 1;
   //Otherwise apply "normal gravity" downwards
   } else {
-    this.vy += 1.5;
+    this.vy += 1;
   }
 
   //Update Y position and constrain on canvas
@@ -123,16 +124,38 @@ Player.prototype.update = function() {
 //
 // Draw the player as a rectangle on the screen with a little ellipse as an eye
 Player.prototype.display = function() {
-  push();
-  fill(this.color[0], this.color[1],this.color[2]); //black
-  rect(this.x,this.y,this.w,this.h, this.r);
-  fill(255); // white
-  if(this.facingRight){
-    ellipse(this.x + this.w/4, this.y - this.h/2 + 5, 5);
-  } else{
-    ellipse(this.x - this.w/4, this.y - this.h/2 + 5, 5);
+  // push();
+  // fill(this.color[0], this.color[1],this.color[2]); //black
+  // rect(this.x,this.y,this.w,this.h, this.r);
+  // fill(255); // white
+  // if(this.facingRight){
+  //   ellipse(this.x + this.w/4, this.y - this.h/2 + 5, 5);
+  // } else{
+  //   ellipse(this.x - this.w/4, this.y - this.h/2 + 5, 5);
+  // }
+  // pop();
+  // animate the sprite sheet
+  if(this.y + this.h/2 !== height){
+    if(this.facingRight){
+      animation(jumpingRightAnimation, this.x, this.y);
+    }
+    else{
+      animation(jumpingLeftAnimation, this.x, this.y);
+    }
+
   }
-  pop();
+  else if(this.vx>0){
+    animation(runningRightAnimation, this.x, this.y);
+  }
+  else if(this.vx<0){
+    animation(runningLeftAnimation, this.x, this.y);
+  }
+  else if(this.facingRight){
+    animation(standingRightAnimation, this.x, this.y);
+  } else{
+    animation(standingLeftAnimation, this.x, this.y);
+  }
+
 }
 
 Player.prototype.shoot = function() {

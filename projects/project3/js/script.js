@@ -17,8 +17,19 @@ var canvas;
 //Sounds
 var beepSound;
 
+//sprite
+var spriteSheet;
+
+//animations
+var standingLeftAnimation;
+var standingRightAnimation;
+var runningLeftAnimation;
+var runningRightAnimation;
+var jumpingRightAnimation;
+
 //player
 var player;
+
 
 //text
 var putToLandscape = "Turn your screen to \n landscape mode";
@@ -27,7 +38,39 @@ var putToLandscape = "Turn your screen to \n landscape mode";
 //
 // Loads
 function preload() {
-  beepSound = loadSound("assets/sounds/beep.wav")
+  beepSound = loadSound("assets/sounds/beep.wav");
+
+  //loading player animation files
+  standingLeftAnimation = loadAnimation(
+    'assets/images/playerStanding/player_standing0.png',
+    'assets/images/playerStanding/player_standing7.png');
+
+  standingRightAnimation = loadAnimation(
+      'assets/images/playerStandingRight/player_standing_right0.png',
+      'assets/images/playerStandingRight/player_standing_right7.png');
+
+  runningRightAnimation = loadAnimation(
+    'assets/images/playerRunningRight/player_running_right00.png',
+    'assets/images/playerRunningRight/player_running_right09.png'
+  )
+
+  runningLeftAnimation = loadAnimation(
+    'assets/images/playerRunningLeft/player_running_left00.png',
+    'assets/images/playerRunningLeft/player_running_left09.png'
+  )
+
+  jumpingRightAnimation = loadAnimation(
+    'assets/images/playerJumpingUp/player_jumping_up0.png',
+    'assets/images/playerJumpingUp/player_jumping_up6.png'
+  )
+
+  jumpingLeftAnimation = loadAnimation(
+    'assets/images/playerJumpingLeft/player_jumping_left0.png',
+    'assets/images/playerJumpingLeft/player_jumping_left6.png'
+  )
+
+  jumpingRightAnimation.looping = false;
+  jumpingLeftAnimation.looping = false;
 
   //detecting if user is on a phone (implying possibility for touch)
   detectPhone();
@@ -81,7 +124,7 @@ function draw() {
     if(onMobile){
       background(0, 216, 255, 100);
     }else{
-      background(155, 100);
+      background(155);
     }
 
     //analyse touch inputs and convert them to player controls if on mobile
@@ -136,6 +179,12 @@ function touchMoved() {
   return false;
 }
 
+
+//goFullScreen()
+//
+//Puts the game in fullscreen
+//Adjusts canvas size on mobile to fit the display
+//Is not currently used because causes bugs with p5.play.js
 function goFullScreen() {
   //if(mouseX < 80 && mouseX > 0 && mouseY > 0 && mouseY < 80){
     // When the mouse is pressed we toggle the variable tracking fullscreen

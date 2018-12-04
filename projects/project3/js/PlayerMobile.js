@@ -13,6 +13,7 @@ function PlayerMobile(x,y) {
   this.vy = 0;
   this.w = 20;
   this.h = 30;
+  this.life = 100;
   this.color = [0,0,0];
   this.speed = 5;
   this.jumping = false;
@@ -26,11 +27,12 @@ function PlayerMobile(x,y) {
   this.facingRight = true; //Check which side of canvas player is facing
   this.bulletArray = []; //An array containing bullets shot by player
   this.shot = false; //boolean showing if mouse press released a bullet
+  this.buttonSize = 60;
+  this.buttonMargin = 6;
+  this.buttonDistance = 40;
 }
 
-var buttonSize = 60;
-var margin = 6;
-var buttonDistance = 40;
+
 
 
 PlayerMobile.prototype.playerController = function(){
@@ -43,40 +45,40 @@ PlayerMobile.prototype.playerController = function(){
     //if it is on the left, analyze where it is on the left game pad
     if(touches[i].x < width/2){
       //touching the left side of the controller
-      if(touches[i].x < margin+buttonSize &&
-        touches[i].x > margin &&
-        touches[i].y > height- margin - buttonSize*2 - buttonDistance &&
-        touches[i].y < height-margin ){
+      if(touches[i].x < this.buttonMargin+this.buttonSize &&
+        touches[i].x > this.buttonMargin &&
+        touches[i].y > height- this.buttonMargin - this.buttonSize*2 - this.buttonDistance &&
+        touches[i].y < height-this.buttonMargin ){
         this.leftKeyPressed = true;
       } else{
         this.leftKeyPressed = false;
       }
 
       //touching the right side of the controller
-      if(touches[i].x < margin + buttonDistance + buttonSize*2 &&
-        touches[i].x > margin + buttonDistance + buttonSize &&
-        touches[i].y > height- margin - buttonSize*2 - buttonDistance &&
-        touches[i].y < height-margin){
+      if(touches[i].x < this.buttonMargin + this.buttonDistance + this.buttonSize*2 &&
+        touches[i].x > this.buttonMargin + this.buttonDistance + this.buttonSize &&
+        touches[i].y > height- this.buttonMargin - this.buttonSize*2 - this.buttonDistance &&
+        touches[i].y < height-this.buttonMargin){
         this.rightKeyPressed = true;
       } else{
         this.rightKeyPressed = false;
       }
 
       //touching the bottom side of the controller
-      if(touches[i].x < margin + buttonDistance + buttonSize*2 &&
-        touches[i].x > margin &&
-        touches[i].y > height-margin - buttonSize &&
-        touches[i].y < height-margin ){
+      if(touches[i].x < this.buttonMargin + this.buttonDistance + this.buttonSize*2 &&
+        touches[i].x > this.buttonMargin &&
+        touches[i].y > height-this.buttonMargin - this.buttonSize &&
+        touches[i].y < height-this.buttonMargin ){
         this.downKeyPressed = true;
       } else{
         this.downKeyPressed = false;
       }
 
       //touching the top side of the controller
-      if(touches[i].x < margin + buttonDistance + buttonSize*2 &&
-        touches[i].x > margin &&
-        touches[i].y > height-margin - buttonDistance - buttonSize*2 &&
-        touches[i].y < height-margin - buttonDistance - buttonSize ){
+      if(touches[i].x < this.buttonMargin + this.buttonDistance + this.buttonSize*2 &&
+        touches[i].x > this.buttonMargin &&
+        touches[i].y > height-this.buttonMargin - this.buttonDistance - this.buttonSize*2 &&
+        touches[i].y < height-this.buttonMargin - this.buttonDistance - this.buttonSize ){
         this.upKeyPressed = true;
       } else{
         this.upKeyPressed = false;
@@ -94,20 +96,20 @@ PlayerMobile.prototype.playerController = function(){
     //if it is on the right, analyze if it touches the right buttons
     } else{
       //touching the jump key
-      if(touches[i].x < width-margin-buttonSize+buttonDistance/4 &&
-        touches[i].x > width-margin-buttonSize*2+buttonDistance/4 &&
-        touches[i].y > height-margin-buttonSize &&
-        touches[i].y < height-margin ){
+      if(touches[i].x < width-this.buttonMargin-this.buttonSize+this.buttonDistance/4 &&
+        touches[i].x > width-this.buttonMargin-this.buttonSize*2+this.buttonDistance/4 &&
+        touches[i].y > height-this.buttonMargin-this.buttonSize &&
+        touches[i].y < height-this.buttonMargin ){
         this.jumpKeyPressed = true;
       } else{
         this.jumpKeyPressed = false;
       }
 
       //touching the shoot key
-      if(touches[i].x < width-margin &&
-        touches[i].x > width-margin-buttonSize &&
-        touches[i].y > height-margin-buttonSize*2+buttonDistance/4 &&
-        touches[i].y < height-margin-buttonSize+buttonDistance/4 ){
+      if(touches[i].x < width-this.buttonMargin &&
+        touches[i].x > width-this.buttonMargin-this.buttonSize &&
+        touches[i].y > height-this.buttonMargin-this.buttonSize*2+this.buttonDistance/4 &&
+        touches[i].y < height-this.buttonMargin-this.buttonSize+this.buttonDistance/4 ){
         this.shootKeyPressed = true;
       } else{
         this.shootKeyPressed = false;
@@ -151,27 +153,28 @@ PlayerMobile.prototype.drawControls = function(){
   push();
   noFill();
   stroke(0);
+
   //left gamepad for movement
-  ellipse(margin + buttonSize + buttonDistance/2,
-    height- margin - buttonSize*1.5 - buttonDistance,
-    buttonSize);
-  ellipse(margin + buttonSize*1.5 + buttonDistance,
-    height-margin - buttonSize - buttonDistance/2,
-     buttonSize);
-  ellipse(margin + buttonSize + buttonDistance/2,
-    height-margin - buttonSize/2,
-    buttonSize);
-  ellipse(margin+buttonSize/2,
-    height-margin - buttonSize - buttonDistance/2,
-    buttonSize);
+  ellipse(this.buttonMargin + this.buttonSize + this.buttonDistance/2,
+    height- this.buttonMargin - this.buttonSize*1.5 - this.buttonDistance,
+    this.buttonSize);
+  ellipse(this.buttonMargin + this.buttonSize*1.5 + this.buttonDistance,
+    height-this.buttonMargin - this.buttonSize - this.buttonDistance/2,
+     this.buttonSize);
+  ellipse(this.buttonMargin + this.buttonSize + this.buttonDistance/2,
+    height-this.buttonMargin - this.buttonSize/2,
+    this.buttonSize);
+  ellipse(this.buttonMargin+this.buttonSize/2,
+    height-this.buttonMargin - this.buttonSize - this.buttonDistance/2,
+    this.buttonSize);
 
   //right gamepad for jump and shoot
-  ellipse(width-margin-buttonSize-buttonDistance/2,
-     height-margin - buttonSize/2,
-     buttonSize);
-  ellipse(width-margin-buttonSize/2,
-    height-margin-buttonSize-buttonDistance/2,
-    buttonSize);
+  ellipse(width-this.buttonMargin-this.buttonSize-this.buttonDistance/2,
+     height-this.buttonMargin - this.buttonSize/2,
+     this.buttonSize);
+  ellipse(width-this.buttonMargin-this.buttonSize/2,
+    height-this.buttonMargin-this.buttonSize-this.buttonDistance/2,
+    this.buttonSize);
   pop();
 }
 
@@ -270,16 +273,36 @@ PlayerMobile.prototype.update = function() {
 //
 // Draw the player as a rectangle on the screen with a little ellipse as an eye
 PlayerMobile.prototype.display = function() {
-  push();
-  fill(this.color[0], this.color[1],this.color[2]); //black
-  rect(this.x,this.y,this.w,this.h, this.r);
-  fill(255); // white
-  if(this.facingRight){
-    ellipse(this.x + this.w/4, this.y - this.h/2 + 5, 5);
-  } else{
-    ellipse(this.x - this.w/4, this.y - this.h/2 + 5, 5);
+  // push();
+  // fill(this.color[0], this.color[1],this.color[2]); //black
+  // rect(this.x,this.y,this.w,this.h, this.r);
+  // fill(255); // white
+  // if(this.facingRight){
+  //   ellipse(this.x + this.w/4, this.y - this.h/2 + 5, 5);
+  // } else{
+  //   ellipse(this.x - this.w/4, this.y - this.h/2 + 5, 5);
+  // }
+  // pop();
+  if(this.y + this.h/2 !== height){
+    if(this.facingRight){
+      animation(jumpingRightAnimation, this.x, this.y);
+    }
+    else{
+      animation(jumpingLeftAnimation, this.x, this.y);
+    }
+
   }
-  pop();
+  else if(this.vx>0){
+    animation(runningRightAnimation, this.x, this.y);
+  }
+  else if(this.vx<0){
+    animation(runningLeftAnimation, this.x, this.y);
+  }
+  else if(this.facingRight){
+    animation(standingRightAnimation, this.x, this.y);
+  } else{
+    animation(standingLeftAnimation, this.x, this.y);
+  }
 }
 
 PlayerMobile.prototype.shoot = function() {
