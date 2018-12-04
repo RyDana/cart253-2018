@@ -56,15 +56,30 @@ var player;
 //enemies
 var enemyOne;
 
-
 //text
 var putToLandscape = "Turn your screen to \n landscape mode";
+
+//Intro variables
+var introPlaying = true; //detects when intro should stop being played
+var myFont; //font for text display
+var textOpacity = 0; //text will have a changing opacity for fade-in effect
+var xPressed = false; //Detects when the x key is pressed to start game
+var introStarts = true;
+
+//Game Over variables
+var winnerDisplayText;
+var gameOverStarts = true;
+
+var gameStarts = true;
 
 // preload()
 //
 // Loads
 function preload() {
   beepSound = loadSound("assets/sounds/beep.wav");
+
+  //loading font
+  myFont = loadFont('assets/fonts/half_bold_pixel-7.ttf');
 
   //loading player animation files
   standingLeftAnimation = loadAnimation(
@@ -139,7 +154,7 @@ function preload() {
   );
 
 
-
+  //loading enemy animation files
 
   enemOneStandingLeftAnimation = loadAnimation(
     'assets/images/MonsterOneStandingLeft/monsterOne_standing_left0.png',
@@ -151,9 +166,10 @@ function preload() {
     'assets/images/MonsterOneStandingRight/monsterOne_standing_right7.png'
   );
 
+  //loading enemy images
   enemyOneFace = loadImage('assets/images/enemyOne_face.png');
 
-
+  //loading player images
   playerFace = loadImage('assets/images/player_face.png');
   crouchRight = loadImage('assets/images/player_crouch_right.png');
   crouchLeft = loadImage('assets/images/player_crouch_left.png');
@@ -189,6 +205,7 @@ function setup() {
   noStroke();
   textSize(30);
   textAlign(CENTER,CENTER);
+  textFont(myFont);
 }
 
 // draw()
@@ -217,41 +234,61 @@ function draw() {
       background(0);
     }
 
-    //analyse touch inputs and convert them to player controls if on mobile
-    if(onMobile){
-      player.playerController();
+    if (introPlaying){
+      if(introStarts){
+        //play intro music
+        // introMusic.loop = true;
+        // introMusic.currentTime = 0;
+        // introMusic.play();
+        introStarts = false;
+      }
+      displayIntro(); //Starting with an intro
+    } else if (player.life <= 0 || enemyOne.life <= 0){
+      //Turn off game music, rewind it, and play outro music once
+      // gameMusic.pause();
+      // gameMusic.currentTime = 0;
+      if(gameOverStarts){
+        // gameOverMusic.loop = false;
+        // gameOverMusic.play();
+        gameOverStarts = false;
+      }
+      displayGameOver(); //End with a game over
+    }else {
+      //analyse touch inputs and convert them to player controls if on mobile
+      if(onMobile){
+        player.playerController();
+      }
+      //Handle inputs of player
+      player.handleInputMove();
+      player.handleInputJump();
+      player.handleInputCrouch();
+      player.handleInputUp();
+      player.shoot();
+
+      player.handleBulletCollision(enemyOne);
+      enemyOne.handleBulletCollision(player);
+      player.handleEnemyCollision(enemyOne);
+
+      //Updates player and bullets shot
+      enemyOne.update(player.x);
+      enemyOne.updateBullets();
+      player.update();
+      player.updateBullets();
+
+      //Displays player and bullets shot
+      enemyOne.display();
+      enemyOne.displayBullets();
+      player.display();
+      player.displayBullets();
+
+      enemyOne.displayLifeBar();
+      player.displayLifeBar();
+
+      //display controller if on mobile
+      if(onMobile){
+        player.drawControls();
+      }
     }
-    //Handle inputs of player
-    player.handleInputMove();
-    player.handleInputJump();
-    player.handleInputCrouch();
-    player.handleInputUp();
-    player.shoot();
-
-    player.handleBulletCollision(enemyOne);
-    enemyOne.handleBulletCollision(player);
-    player.handleEnemyCollision(enemyOne);
-
-    //Updates player and bullets shot
-    enemyOne.update(player.x);
-    enemyOne.updateBullets();
-    player.update();
-    player.updateBullets();
-
-    //Displays player and bullets shot
-    enemyOne.display();
-    enemyOne.displayBullets();
-    player.display();
-    player.displayBullets();
-
-    enemyOne.displayLifeBar();
-    player.displayLifeBar();
-
-    //display controller if on mobile
-    if(onMobile){
-      player.drawControls();
-    }
-
   }
 }
 
@@ -327,6 +364,83 @@ function goFullScreen() {
     // // And we calculate and set the width based on the ratio
     // canvas.style("width:" + newWidth + "px");
 
+}
+
+//displayIntro()
+//
+//Displays title of game, controls, and creates countdown once player starts game
+function displayIntro(){
+  //setting some text
+  //textFont(myFont);
+  textSize(50);
+  textAlign(CENTER,CENTER);
+
+  //detect is x key has been pressed
+  if(keyIsDown(88)){
+    xPressed = true;
+  }
+
+  //stop the intro at key press
+  if(xPressed){
+    introPlaying = false;
+  //if the x has not been pressed, display Title text
+  } else {
+    fill(random(200,255), constrain(textOpacity,0,255));
+    textSize(50);
+    text("BFBFBF",width/2,height/2-100);
+    textSize(14);
+    text("(Boss Fight, Boss Fight, Boss Fight)",width/2,height/2-50);
+    // text("Up and down arrows control the right player", width/2, height/2);
+    // text("W and S keys control the left player", width/2, height/2 + 20);
+    // text("Avoid the red ball or your controls will be inverted for 5 seconds", width/2, height/2 + 40);
+    // text("A ball multiplier roams around to duplicate every ball that touches it", width/2, height/2 + 60);
+
+    textSize(25);
+    text("Press x to start the game", width/2, height/2 + 100);
+    textOpacity++; //text appears in a fade-in, thus with increasing opacity
+  }
+}
+
+//displayGameOver()
+//
+//diplays game over text, the winner, and possibility to restart game
+function displayGameOver(){
+  //Display "Game Ove" the text
+  fill(random(200,255));
+  textSize(50);
+  text("GAME OVER",width/2,height/2-100);
+
+  //Display who won
+  textSize(25);
+  if(player.life <= 0){
+    winnerDisplayText = "You've been defeated";
+  } else {
+    winnerDisplayText = "YOU WON!";
+  }
+  text(winnerDisplayText, width/2, height/2);
+
+  //Displays "press x to restart"
+  //text("press x to restart game", width/2, height/2+100);
+
+  // //detect if x key has been pressed
+  // if(keyIsDown(88)){
+  //   //Resets balls and players
+  //   ball.reset();
+  //   ballArray = [ball];
+  //   enemyBall.reset();
+  //   leftPaddle.reset();
+  //   rightPaddle.reset();
+  //
+  //   //Stop outro music, rewinf it and reset trigger
+  //   gameOverMusic.pause();
+  //   gameOverMusic.currentTime = 0;
+  //   gameOverStarts = true;
+  //
+  //   // Triggers the intro sequence
+  //   introPlaying = true;
+  //   // Skips the title screen
+  //   xPressed = true;
+  // }
 }
 
 //TODO: disable copy pop-up on long press in mobile
