@@ -136,3 +136,19 @@ EnemyOne.prototype.displayBullets = function (){
     }
   }
 }
+
+EnemyOne.prototype.handleBulletCollision = function(enemy){
+  if(this.bulletArray.length > 0){
+    for(i = this.bulletArray.length -1; i >=0; i--){
+      if(this.bulletArray[i].x + this.bulletArray[i].w/2 > enemy.x - enemy.w/2
+        && this.bulletArray[i].x - this.bulletArray[i].w/2 < enemy.x + enemy.w/2){
+          if(this.bulletArray[i].y + this.bulletArray[i].w/2 > enemy.y - enemy.h/2
+            && this.bulletArray[i].y - this.bulletArray[i].w/2 < enemy.y + enemy.h/2){
+              this.bulletArray.splice(i, 1);
+              enemy.life -=2;
+              // console.log(enemy.life);
+          }
+      }
+    }
+  }
+}

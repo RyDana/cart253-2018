@@ -142,6 +142,10 @@ function draw() {
     player.handleInputCrouch();
     player.shoot();
 
+    player.handleBulletCollision(enemyOne);
+    enemyOne.handleBulletCollision(player);
+    player.handleEnemyCollision(enemyOne);
+
     //Updates player and bullets shot
     enemyOne.update(player.x);
     enemyOne.updateBullets();

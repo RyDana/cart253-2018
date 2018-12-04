@@ -16,6 +16,7 @@ function Player(x,y) {
   this.life = 100;
   this.color = [0,0,0];
   this.speed = 3;
+  this.touchingEnemy = false;
   this.jumping = false;
   this.jumpSpeed = 15; //speed upwards during jump
   this.downKey = 83; //S key
@@ -220,5 +221,36 @@ Player.prototype.displayBullets = function (){
     for(i = 0; i < this.bulletArray.length; i++){
       this.bulletArray[i].display();
     }
+  }
+}
+
+Player.prototype.handleBulletCollision = function(enemy){
+  if(this.bulletArray.length > 0){
+    for(i = this.bulletArray.length -1; i >=0; i--){
+      if(this.bulletArray[i].x + this.bulletArray[i].w/2 > enemy.x - enemy.w/2
+        && this.bulletArray[i].x - this.bulletArray[i].w/2 < enemy.x + enemy.w/2){
+          if(this.bulletArray[i].y + this.bulletArray[i].w/2 > enemy.y - enemy.h/2
+            && this.bulletArray[i].y - this.bulletArray[i].w/2 < enemy.y + enemy.h/2){
+              this.bulletArray.splice(i, 1);
+              enemy.life -=2;
+              // console.log(enemy.life);
+          }
+      }
+    }
+  }
+}
+
+Player.prototype.handleEnemyCollision = function(enemy){
+  if(this.x + this.w/2 > enemy.x - enemy.w/2
+    && this.x - this.w/2 < enemy.x + enemy.w/2
+    &&this.y + this.w/2 > enemy.y - enemy.h/2
+    && this.y - this.w/2 < enemy.y + enemy.h/2){
+      if(!this.touchingEnemy){
+        this.life -=2;
+        this.touchingEnemy = true;
+        console.log(this.life);
+      }
+  }else{
+    this.touchingEnemy = false;
   }
 }
