@@ -27,6 +27,10 @@ var runningLeftAnimation;
 var runningRightAnimation;
 var jumpingRightAnimation;
 
+//Enemy Animations
+var enemOneStandingLeftAnimation;
+var enemOneStandingRightAnimation;
+
 //player
 var player;
 
@@ -74,6 +78,16 @@ function preload() {
 
   jumpingRightAnimation.looping = false;
   jumpingLeftAnimation.looping = false;
+
+  enemOneStandingLeftAnimation = loadAnimation(
+    'assets/images/MonsterOneStandingLeft/monsterOne_standing_left0.png',
+    'assets/images/MonsterOneStandingLeft/monsterOne_standing_left7.png'
+  );
+
+  enemOneStandingRightAnimation = loadAnimation(
+    'assets/images/MonsterOneStandingRight/monsterOne_standing_right0.png',
+    'assets/images/MonsterOneStandingRight/monsterOne_standing_right7.png'
+  );
 
   //detecting if user is on a phone (implying possibility for touch)
   detectPhone();
