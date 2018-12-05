@@ -1,6 +1,6 @@
 // EnemyOne
 //
-// A class that defines how the first enemy behaves
+// A class that defines how the first enemy behaves and is displayed
 
 // EnemyOne constructor
 //
@@ -13,101 +13,87 @@ function EnemyOne(x,y) {
   this.w = 68;
   this.h = 62;
   this.life = 100;
-  this.timer = 0;
-  this.movingTowardsPlayer = false;
-  this.color = [0,0,0];
-  this.speed = 3;
-  this.jumping = false;
+  this.timer = 0; //necessary to coordinate enemy movement
+  this.movingTowardsPlayer = false; //trigger movement towards player
   this.jumpSpeed = 15; //speed upwards during jump
-  this.facingRight = true; //Check which side of canvas player is facing
-  this.bulletArray = []; //An array containing bullets shot by player
+  this.facingRight = true; //Check which side of canvas enemy is facing
+  this.bulletArray = []; //An array containing bullets shot by enemy
   this.bulletSpeed = 5;
   this.bulletSize = 10;
   this.bulletColor = [247, 173, 61];
-  this.bulletsShot = 0;
-  this.shot = false; //boolean showing if mouse press released a bullet
+  this.bulletsShot = 0; //count amout of bullets shot
 }
 
+//update
+//
+//Updates position and actions of enemy
 EnemyOne.prototype.update = function(playerX){
   //move by a certain amount of distance towards player
-  //every three seconds (every 180 frames) for 40 frames
+  //every three seconds (every 180 frames) for 60 frames
   if(this.timer%180 === 0 && this.timer !==0){
+    //allow movement towards player
     this.movingTowardsPlayer = true;
+
+    //jump
     this.vy = -this.jumpSpeed; //upwards velocity
   } else if (this.timer%180 === 60){
     this.movingTowardsPlayer = false;
   }
 
+  //check what direction enemy should face (towards player)
   if(playerX-this.x > 0){
     this.facingRight = true;
   }else{
     this.facingRight = false;
   }
 
+  //move towards player in decreasing speed
   if(this.movingTowardsPlayer){
     this.vx = (playerX-this.x)/40;
     this.bulletsShot = 0;
+
+  //if movement not allowed, shoot player every 40 frames, 3 times
   } else{
     if(this.timer%40 ===0 && this.bulletsShot < 2){
-        this.bulletArray.push(new Bullet(this.x, this.y, this.facingRight, false,
+      //create and push bullet onto array
+      this.bulletArray.push(new Bullet(this.x, this.y, this.facingRight, false,
         this.bulletSpeed, this.bulletSize, this.bulletColor));
+      //increase counter of bullets shot
       this.bulletsShot++;
     }
+
+    //do not move
     this.vx = 0;
   }
 
-  //gravity
+  //gravity applied only when enemy is in the air
   if(this.y !== 0){
     this.vy += 0.5;
   } else {
     this.vy = 0;
   }
 
+  //update and constrain position
   this.y += this.vy;
   this.y = constrain(this.y,0+this.h/2,height-this.h/2);
 
   this.x +=this.vx;
   this.x = constrain(this.x,0+this.w/2,width-this.w/2);
 
+  //increase timer
   this.timer++;
 }
 
 // display()
 //
-// Draw the player as a rectangle on the screen with a little ellipse as an eye
+// Draw the enemy with its sprites
 EnemyOne.prototype.display = function() {
-  // push();
-  // fill(this.color[0], this.color[1],this.color[2]); //black
-  // rect(this.x,this.y,this.w,this.h);
-  // //fill(255); // white
-  // // if(this.facingRight){
-  // //   ellipse(this.x + this.w/4, this.y - this.h/2 + 5, 5);
-  // // } else{
-  // //   ellipse(this.x - this.w/4, this.y - this.h/2 + 5, 5);
-  // // }
-  // pop();
-
-  // animate the sprite sheet
-  //if(this.y + this.h/2 !== height){
-    if(this.facingRight){
-      animation(enemOneStandingRightAnimation, this.x, this.y);
-    }
-    else{
-      animation(enemOneStandingLeftAnimation, this.x, this.y);
-    }
-  //}
-  // else if(this.vx>0){
-  //   animation(runningRightAnimation, this.x, this.y);
-  // }
-  // else if(this.vx<0){
-  //   animation(runningLeftAnimation, this.x, this.y);
-  // }
-  // else if(this.facingRight){
-  //   animation(standingRightAnimation, this.x, this.y);
-  // } else{
-  //   animation(standingLeftAnimation, this.x, this.y);
-  // }
-
+  if(this.facingRight){
+    animation(enemOneStandingRightAnimation, this.x, this.y);
+  }
+  else{
+    animation(enemOneStandingLeftAnimation, this.x, this.y);
+  }
 }
 
 //updateBullets()
@@ -119,13 +105,13 @@ EnemyOne.prototype.updateBullets = function (){
       this.bulletArray[i].update();
     }
 
+    //removes bullet if is out of canvas
     for(var j = this.bulletArray.length - 1; j >= 0; j--) {
       if(this.bulletArray[j].outOfCanvas()) {
          this.bulletArray.splice(j, 1);
       }
     }
   }
-
 }
 
 //displayBullets()
@@ -139,6 +125,9 @@ EnemyOne.prototype.displayBullets = function (){
   }
 }
 
+//handleBulletCollision()
+//
+//handles collisions between the enemy's bullets and the player
 EnemyOne.prototype.handleBulletCollision = function(player){
   if(this.bulletArray.length > 0){
     for(i = this.bulletArray.length -1; i >=0; i--){
@@ -149,12 +138,16 @@ EnemyOne.prototype.handleBulletCollision = function(player){
               this.bulletArray.splice(i, 1);
               player.life -= 5;
               // console.log(enemy.life);
-          }
+        }
       }
     }
   }
 }
 
+//displayLifeBar()
+//
+//Displays amount of enemy's life on a life bar
+//and a picture of the enemy
 EnemyOne.prototype.displayLifeBar = function(){
   push();
   fill(255,0,0);

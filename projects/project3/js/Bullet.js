@@ -62,7 +62,7 @@ Bullet.prototype.display = function() {
 
 // outOfCanvas()
 //
-// Draw the bullet as an ellipse
+// return true when bullet is out of canvas
 Bullet.prototype.outOfCanvas = function() {
   if(this.x - this.w/2 > width || this.x + this.w/2 < 0){
     return true;

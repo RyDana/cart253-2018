@@ -26,14 +26,17 @@ function Player(x,y) {
   this.jumpKey = 80; //P key
   this.shootKey = 79; //O key
   this.facingRight = true; //Check which side of canvas player is facing
-  this.lookingUp = false;
+  this.lookingUp = false; //Check if player looking up
   this.bulletArray = []; //An array containing bullets shot by player
   this.bulletSpeed = 10;
   this.bulletSize = 5;
   this.bulletColor= [255, 24, 238];
-  this.shot = false; //boolean showing if mouse press released a bullet
+  this.shot = false; //boolean showing if key press released a bullet
 }
 
+//handleInputUp()
+//
+//Checks if player is looking up (up key pressed)
 Player.prototype.handleInputUp = function(){
   if(keyIsDown(this.upKey)){
     this.lookingUp = true;
@@ -41,6 +44,7 @@ Player.prototype.handleInputUp = function(){
     this.lookingUp = false;
   }
 }
+
 // handleInputMove()
 //
 // Check if the left or right keys are pressed and update velocity
@@ -76,12 +80,6 @@ Player.prototype.handleInputJump = function() {
     this.vy = -this.jumpSpeed; //upwards velocity
     this.jumping = true; //jumping state becomes true
   }
-  //Quickly releasing the key after pressing it does a smaller jump
-  //If player released up key and player is still in mid air
-  // if(!keyIsDown(this.jumpKey) && this.jumping === true){
-  //   this.vy += 4; //force the player down faster ("increased gravity")
-  // }
-
 }
 
 // handleInputCrouch()
@@ -134,35 +132,26 @@ Player.prototype.update = function() {
 
 // display()
 //
-// Draw the player as a rectangle on the screen with a little ellipse as an eye
+// Draw the player using loaded sprites
 Player.prototype.display = function() {
-  // push();
-  // fill(this.color[0], this.color[1],this.color[2]); //black
-  // rect(this.x,this.y,this.w,this.h, this.r);
-  // fill(255); // white
-  // if(this.facingRight){
-  //   ellipse(this.x + this.w/4, this.y - this.h/2 + 5, 5);
-  // } else{
-  //   ellipse(this.x - this.w/4, this.y - this.h/2 + 5, 5);
-  // }
-  // pop();
-  //animate the sprite sheet
+
+  //player looking up, weapon pointed up
   if(this.lookingUp){
-    if(this.h < 32){
-      if(this.vx === 0){
-        if(this.facingRight){
+    if(this.h < 32){ //if player crouching
+      if(this.vx === 0){ //if player not moving
+        if(this.facingRight){ //if player facing left
           push();
           imageMode(CENTER);
           image(upCrouchRight, this.x, this.y);
           pop();
         }
-        else{
+        else{ //if player facing right
           push();
           imageMode(CENTER);
           image(upCrouchLeft, this.x, this.y);
           pop();
         }
-      } else{
+      } else{ //if player moving
         if(this.facingRight){
           animation(upCrouchRightAnimation, this.x, this.y);
         }
@@ -170,8 +159,8 @@ Player.prototype.display = function() {
           animation(upCrouchLeftAnimation, this.x, this.y);
         }
       }
-
     }
+    //if player is not touching the ground
     else if(this.y + this.h/2 !== height){
       if(this.facingRight){
         animation(jumpingRightAnimation, this.x, this.y);
@@ -179,19 +168,23 @@ Player.prototype.display = function() {
       else{
         animation(jumpingLeftAnimation, this.x, this.y);
       }
-
     }
+    //if player moving right
     else if(this.vx>0){
       animation(upRunningRightAnimation, this.x, this.y);
     }
+    //or left
     else if(this.vx<0){
       animation(upRunningLeftAnimation, this.x, this.y);
     }
+    //if player is not moving
     else if(this.facingRight){
       animation(upStandingRightAnimation, this.x, this.y);
     } else{
       animation(upStandingLeftAnimation, this.x, this.y);
     }
+  // if player is not looking up, repeat the previous commands
+  //but replace the animation with the player's weapon not pointed up
   } else {
     if(this.h < 32){
       if(this.vx === 0){
@@ -241,25 +234,11 @@ Player.prototype.display = function() {
 
 }
 
+//shoot
+//
+//allows player to shoot bullets from the weapon
 Player.prototype.shoot = function() {
-  // //angle between player center and mouse
-  // var angle = atan((this.y - mouseY)/( this.x - mouseX));
-  //
-  // //If player presses mouse and player is not currently shooting
-  // if(mouseIsPressed && this.shot === false){
-  //   //create a new bullet and push it into the array
-  //   this.bulletArray.push(new Bullet(this.x, this.y, angle));
-  //   console.log(angle);
-  //   //Change shooting state
-  //   this.shot = true;
-  // }
-  //
-  // //Player allowed to shoot another bullet only when releases the mouse
-  // if(!mouseIsPressed){
-  //   this.shot = false;
-  // }
-
-  //check state of player
+  //check state of player if shoot key pressed and if player has not shot yet
   if(keyIsDown(this.shootKey) && this.shot === false){
       //create a new bullet and push it into the array
       this.bulletArray.push(new Bullet(this.x, this.y, this.facingRight,
@@ -284,6 +263,7 @@ Player.prototype.updateBullets = function (){
       this.bulletArray[i].update();
     }
 
+    //remove bullet from array if it's out of canvas
     for(var j = this.bulletArray.length - 1; j >= 0; j--) {
       if(this.bulletArray[j].outOfCanvas()) {
          this.bulletArray.splice(j, 1);
@@ -304,14 +284,21 @@ Player.prototype.displayBullets = function (){
   }
 }
 
+//handleBulletCollision()
+//
+//handles collisions between the player's bullets and the enemy
 Player.prototype.handleBulletCollision = function(enemy){
   if(this.bulletArray.length > 0){
+    //iterate through all the bullets
     for(i = this.bulletArray.length -1; i >=0; i--){
+      //check for overlap
       if(this.bulletArray[i].x + this.bulletArray[i].w/2 > enemy.x - enemy.w/2
         && this.bulletArray[i].x - this.bulletArray[i].w/2 < enemy.x + enemy.w/2){
           if(this.bulletArray[i].y + this.bulletArray[i].w/2 > enemy.y - enemy.h/2
             && this.bulletArray[i].y - this.bulletArray[i].w/2 < enemy.y + enemy.h/2){
+              //remove bullet from array
               this.bulletArray.splice(i, 1);
+              //diminish life of enemy
               enemy.life -=2;
               // console.log(enemy.life);
           }
@@ -320,21 +307,34 @@ Player.prototype.handleBulletCollision = function(enemy){
   }
 }
 
+
+//handleEnemyCollision
+//
+//handle collision between player and enemy
 Player.prototype.handleEnemyCollision = function(enemy){
+  //check for overlap
   if(this.x + this.w/2 > enemy.x - enemy.w/2
     && this.x - this.w/2 < enemy.x + enemy.w/2
     &&this.y + this.w/2 > enemy.y - enemy.h/2
     && this.y - this.w/2 < enemy.y + enemy.h/2){
+      //if was not touching the enemy in the previous frame
       if(!this.touchingEnemy){
+        //diminish life of player
         this.life -=8;
+        //dissalow player to be hurt again by the same contact
         this.touchingEnemy = true;
-        console.log(this.life);
       }
+  //whenever player not touching enemy anymore
   }else{
+    //allow player to be hurn again
     this.touchingEnemy = false;
   }
 }
 
+//displayLifeBar()
+//
+//Displays amount of player's life on a life bar
+//and a picture of the player
 Player.prototype.displayLifeBar = function(){
   push();
   fill(0,255,0);
