@@ -76,7 +76,13 @@ var gameStarts = true;
 //
 // Loads
 function preload() {
-  beepSound = loadSound("assets/sounds/beep.wav");
+  enemyBulletSound = new Audio("assets/sounds/enemy_bullet.wav");
+  enemyJumpSound = new Audio("assets/sounds/enemy_jump.wav");
+  playerBulletSound = new Audio("assets/sounds/player_bullet.wav");
+  playerHitSound = new Audio("assets/sounds/player_hit.wav");
+  introMusic = new Audio("assets/sounds/intro_tune.wav");
+  gameMusic = new Audio("assets/sounds/game_tune.wav");
+  gameOverMusic = new Audio("assets/sounds/outro_music.wav");
 
   //loading font
   myFont = loadFont('assets/fonts/half_bold_pixel-7.ttf');
@@ -193,6 +199,8 @@ function setup() {
     //create player using PlayerMobile constructor (for touch capabilities)
     player = new PlayerMobile(width/2, height/2);
 
+    enemyOne = new EnemyOne(width/4, height/2);
+
   }else{
     canvas = createCanvas(1280,480);
     //Create Player using Player constructor (for keyboard capabilities)
@@ -227,29 +235,25 @@ function draw() {
       canvasCreated = true;
     }
 
-    //different background colors for testing purposes
-    if(onMobile){
-      background(0, 216, 255, 100);
-    }else{
-      background(0);
-    }
+    //Black background
+    background(0);
 
     if (introPlaying){
       if(introStarts){
         //play intro music
-        // introMusic.loop = true;
-        // introMusic.currentTime = 0;
-        // introMusic.play();
+        introMusic.loop = true;
+        introMusic.currentTime = 0;
+        introMusic.play();
         introStarts = false;
       }
       displayIntro(); //Starting with an intro
     } else if (player.life <= 0 || enemyOne.life <= 0){
-      //Turn off game music, rewind it, and play outro music once
-      // gameMusic.pause();
-      // gameMusic.currentTime = 0;
+      //Turn off game music and play outro music once
+      gameMusic.pause();
+      gameMusic.currentTime = 0;
       if(gameOverStarts){
-        // gameOverMusic.loop = false;
-        // gameOverMusic.play();
+        gameOverMusic.loop = false;
+        gameOverMusic.play();
         gameOverStarts = false;
       }
       displayGameOver(); //End with a game over
@@ -265,22 +269,24 @@ function draw() {
       player.handleInputUp();
       player.shoot();
 
+      //handle collisions
       player.handleBulletCollision(enemyOne);
       enemyOne.handleBulletCollision(player);
       player.handleEnemyCollision(enemyOne);
 
-      //Updates player and bullets shot
+      //Update enemy, player and bullets shot
       enemyOne.update(player.x);
       enemyOne.updateBullets();
       player.update();
       player.updateBullets();
 
-      //Displays player and bullets shot
+      //Displays enemy, player and bullets shot
       enemyOne.display();
       enemyOne.displayBullets();
       player.display();
       player.displayBullets();
 
+      //display life bars
       enemyOne.displayLifeBar();
       player.displayLifeBar();
 
@@ -375,14 +381,26 @@ function displayIntro(){
   textSize(50);
   textAlign(CENTER,CENTER);
 
-  //detect is x key has been pressed
-  if(keyIsDown(88)){
-    xPressed = true;
+  //detect if x key has been pressed or screen has been touched
+  if(onMobile){
+    if(mouseIsPressed){
+      xPressed = true;
+    }
+  } else {
+    if(keyIsDown(88)){
+      xPressed = true;
+    }
   }
+
 
   //stop the intro at key press
   if(xPressed){
     introPlaying = false;
+    //stop the intro music
+    introMusic.pause();
+    //start game music
+    gameMusic.loop = true;
+    gameMusic.play();
   //if the x has not been pressed, display Title text
   } else {
     fill(random(200,255), constrain(textOpacity,0,255));
@@ -390,13 +408,21 @@ function displayIntro(){
     text("BFBFBF",width/2,height/2-100);
     textSize(14);
     text("(Boss Fight, Boss Fight, Boss Fight)",width/2,height/2-50);
-    // text("Up and down arrows control the right player", width/2, height/2);
-    // text("W and S keys control the left player", width/2, height/2 + 20);
-    // text("Avoid the red ball or your controls will be inverted for 5 seconds", width/2, height/2 + 40);
-    // text("A ball multiplier roams around to duplicate every ball that touches it", width/2, height/2 + 60);
 
-    textSize(25);
-    text("Press x to start the game", width/2, height/2 + 100);
+    if(!onMobile){
+      text("A and D to move left and right.", width/2, height/2);
+      text("W to point up. S to crouch.", width/2, height/2 + 20);
+      text("P to jump. O to shoot.", width/2, height/2 + 40);
+      text("Defeat the monster!", width/2, height/2 + 60);
+      textSize(25);
+      text("Press x to start the game", width/2, height/2 + 100);
+    } else{
+      text("Use the given controls to move, jump and shoot", width/2, height/2 + 60);
+      textSize(25);
+      text("Press anywhere to start the game", width/2, height/2 + 100);
+    }
+
+
     textOpacity++; //text appears in a fade-in, thus with increasing opacity
   }
 }

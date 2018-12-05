@@ -36,6 +36,9 @@ EnemyOne.prototype.update = function(playerX){
 
     //jump
     this.vy = -this.jumpSpeed; //upwards velocity
+
+    //sound
+    enemyJumpSound.play();
   } else if (this.timer%180 === 60){
     this.movingTowardsPlayer = false;
   }
@@ -58,6 +61,10 @@ EnemyOne.prototype.update = function(playerX){
       //create and push bullet onto array
       this.bulletArray.push(new Bullet(this.x, this.y, this.facingRight, false,
         this.bulletSpeed, this.bulletSize, this.bulletColor));
+
+      //play sound
+      enemyBulletSound.currentTime = 0;
+      enemyBulletSound.play();
       //increase counter of bullets shot
       this.bulletsShot++;
     }
@@ -137,6 +144,10 @@ EnemyOne.prototype.handleBulletCollision = function(player){
             && this.bulletArray[i].y - this.bulletArray[i].w/2 < player.y + player.h/2){
               this.bulletArray.splice(i, 1);
               player.life -= 5;
+
+              //play sound
+              playerHitSound.currentTime = 0;
+              playerHitSound.play();
               // console.log(enemy.life);
         }
       }

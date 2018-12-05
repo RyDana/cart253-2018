@@ -102,7 +102,7 @@ Player.prototype.update = function() {
   // After Player reaches the peak of the jump (falls down)
   //"increase gravity" to make the player fall down faster
   if(this.vy < 0){
-    this.vy += 1;
+    this.vy += 1.1;
   //Otherwise apply "normal gravity" downwards
   } else {
     this.vy += 1;
@@ -243,6 +243,9 @@ Player.prototype.shoot = function() {
       //create a new bullet and push it into the array
       this.bulletArray.push(new Bullet(this.x, this.y, this.facingRight,
         keyIsDown(this.upKey),this.bulletSpeed, this.bulletSize, this.bulletColor));
+      //play sound
+      playerBulletSound.currentTime = 0;
+      playerBulletSound.play();
       //Change shooting state
       this.shot = true;
   }
@@ -321,6 +324,10 @@ Player.prototype.handleEnemyCollision = function(enemy){
       if(!this.touchingEnemy){
         //diminish life of player
         this.life -=8;
+
+        //play sound
+        playerHitSound.currentTime = 0;
+        playerHitSound.play();
         //dissalow player to be hurt again by the same contact
         this.touchingEnemy = true;
       }

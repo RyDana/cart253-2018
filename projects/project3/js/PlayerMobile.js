@@ -12,12 +12,13 @@ function PlayerMobile(x,y) {
   this.vx = 0;
   this.vy = 0;
   this.w = 20;
-  this.h = 30;
+  this.h = 32;
   this.life = 100;
   this.color = [0,0,0];
-  this.speed = 5;
+  this.speed = 3;
+  this.touchingEnemy = false;
   this.jumping = false;
-  this.jumpSpeed = 40; //speed upwards during jump
+  this.jumpSpeed = 15; //speed upwards during jump
   this.downKeyPressed = false;
   this.upKeyPressed = false;
   this.leftKeyPressed = false;
@@ -25,14 +26,27 @@ function PlayerMobile(x,y) {
   this.jumpKeyPressed = false;
   this.shootKeyPressed = false;
   this.facingRight = true; //Check which side of canvas player is facing
+  this.lookingUp = false; //Check if player looking up
   this.bulletArray = []; //An array containing bullets shot by player
-  this.shot = false; //boolean showing if mouse press released a bullet
+  this.bulletSpeed = 10;
+  this.bulletSize = 5;
+  this.bulletColor= [255, 24, 238];
+  this.shot = false; //boolean showing if key press released a bullet
   this.buttonSize = 60;
   this.buttonMargin = 6;
   this.buttonDistance = 40;
 }
 
-
+//handleInputUp()
+//
+//Checks if player is looking up (up key pressed)
+PlayerMobile.prototype.handleInputUp = function(){
+  if(keyIsDown(this.upKey)){
+    this.lookingUp = true;
+  } else{
+    this.lookingUp = false;
+  }
+}
 
 
 PlayerMobile.prototype.playerController = function(){
@@ -152,7 +166,7 @@ PlayerMobile.prototype.playerController = function(){
 PlayerMobile.prototype.drawControls = function(){
   push();
   noFill();
-  stroke(0);
+  stroke(255);
 
   //left gamepad for movement
   ellipse(this.buttonMargin + this.buttonSize + this.buttonDistance/2,
@@ -227,9 +241,9 @@ PlayerMobile.prototype.handleInputJump = function() {
 PlayerMobile.prototype.handleInputCrouch = function() {
   //If downKey pressed and player is not jumping
   if (this.downKeyPressed && this.jumping === false) {
-    this.h = 20;
+    this.h = 26;
   } else{
-    this.h = 30;
+    this.h = 32;
   }
 
 }
@@ -241,10 +255,10 @@ PlayerMobile.prototype.update = function() {
   // After Player reaches the peak of the jump (falls down)
   //"increase gravity" to make the player fall down faster
   if(this.vy < 0){
-    this.vy += 4;
+    this.vy += 1.1;
   //Otherwise apply "normal gravity" downwards
   } else {
-    this.vy += 1.5;
+    this.vy += 1;
   }
 
   //Update Y position and constrain on canvas
@@ -271,47 +285,121 @@ PlayerMobile.prototype.update = function() {
 
 // display()
 //
-// Draw the player as a rectangle on the screen with a little ellipse as an eye
+// Draw the player using loaded sprites
 PlayerMobile.prototype.display = function() {
-  // push();
-  // fill(this.color[0], this.color[1],this.color[2]); //black
-  // rect(this.x,this.y,this.w,this.h, this.r);
-  // fill(255); // white
-  // if(this.facingRight){
-  //   ellipse(this.x + this.w/4, this.y - this.h/2 + 5, 5);
-  // } else{
-  //   ellipse(this.x - this.w/4, this.y - this.h/2 + 5, 5);
-  // }
-  // pop();
-  if(this.y + this.h/2 !== height){
-    if(this.facingRight){
-      animation(jumpingRightAnimation, this.x, this.y);
-    }
-    else{
-      animation(jumpingLeftAnimation, this.x, this.y);
-    }
 
+  //player looking up, weapon pointed up
+  if(this.lookingUp){
+    if(this.h < 32){ //if player crouching
+      if(this.vx === 0){ //if player not moving
+        if(this.facingRight){ //if player facing left
+          push();
+          imageMode(CENTER);
+          image(upCrouchRight, this.x, this.y);
+          pop();
+        }
+        else{ //if player facing right
+          push();
+          imageMode(CENTER);
+          image(upCrouchLeft, this.x, this.y);
+          pop();
+        }
+      } else{ //if player moving
+        if(this.facingRight){
+          animation(upCrouchRightAnimation, this.x, this.y);
+        }
+        else{
+          animation(upCrouchLeftAnimation, this.x, this.y);
+        }
+      }
+    }
+    //if player is not touching the ground
+    else if(this.y + this.h/2 !== height){
+      if(this.facingRight){
+        animation(jumpingRightAnimation, this.x, this.y);
+      }
+      else{
+        animation(jumpingLeftAnimation, this.x, this.y);
+      }
+    }
+    //if player moving right
+    else if(this.vx>0){
+      animation(upRunningRightAnimation, this.x, this.y);
+    }
+    //or left
+    else if(this.vx<0){
+      animation(upRunningLeftAnimation, this.x, this.y);
+    }
+    //if player is not moving
+    else if(this.facingRight){
+      animation(upStandingRightAnimation, this.x, this.y);
+    } else{
+      animation(upStandingLeftAnimation, this.x, this.y);
+    }
+  // if player is not looking up, repeat the previous commands
+  //but replace the animation with the player's weapon not pointed up
+  } else {
+    if(this.h < 32){
+      if(this.vx === 0){
+        if(this.facingRight){
+          push();
+          imageMode(CENTER);
+          image(crouchRight, this.x, this.y);
+          pop();
+        }
+        else{
+          push();
+          imageMode(CENTER);
+          image(crouchLeft, this.x, this.y);
+          pop();
+        }
+      } else{
+        if(this.facingRight){
+          animation(crouchRightAnimation, this.x, this.y);
+        }
+        else{
+          animation(crouchLeftAnimation, this.x, this.y);
+        }
+      }
+
+    }
+    else if(this.y + this.h/2 !== height){
+      if(this.facingRight){
+        animation(jumpingRightAnimation, this.x, this.y);
+      }
+      else{
+        animation(jumpingLeftAnimation, this.x, this.y);
+      }
+
+    }
+    else if(this.vx>0){
+      animation(runningRightAnimation, this.x, this.y);
+    }
+    else if(this.vx<0){
+      animation(runningLeftAnimation, this.x, this.y);
+    }
+    else if(this.facingRight){
+      animation(standingRightAnimation, this.x, this.y);
+    } else{
+      animation(standingLeftAnimation, this.x, this.y);
+    }
   }
-  else if(this.vx>0){
-    animation(runningRightAnimation, this.x, this.y);
-  }
-  else if(this.vx<0){
-    animation(runningLeftAnimation, this.x, this.y);
-  }
-  else if(this.facingRight){
-    animation(standingRightAnimation, this.x, this.y);
-  } else{
-    animation(standingLeftAnimation, this.x, this.y);
-  }
+
 }
 
 PlayerMobile.prototype.shoot = function() {
   //check state of player
   if(this.shootKeyPressed && this.shot === false){
-      //create a new bullet and push it into the array
-      this.bulletArray.push(new Bullet(this.x, this.y, this.facingRight, this.upKeyPressed));
-      //Change shooting state
-      this.shot = true;
+    //create a new bullet and push it into the array
+    this.bulletArray.push(new Bullet(this.x, this.y, this.facingRight,
+      keyIsDown(this.upKey),this.bulletSpeed, this.bulletSize, this.bulletColor));
+
+    //play sound
+    playerBulletSound.currentTime = 0;
+    playerBulletSound.play();
+
+    //Change shooting state
+    this.shot = true;
   }
 
   //Player allowed to shoot another bullet only when releases the mouse
@@ -342,4 +430,69 @@ PlayerMobile.prototype.displayBullets = function (){
       this.bulletArray[i].display();
     }
   }
+}
+
+//handleBulletCollision()
+//
+//handles collisions between the player's bullets and the enemy
+PlayerMobile.prototype.handleBulletCollision = function(enemy){
+  if(this.bulletArray.length > 0){
+    //iterate through all the bullets
+    for(i = this.bulletArray.length -1; i >=0; i--){
+      //check for overlap
+      if(this.bulletArray[i].x + this.bulletArray[i].w/2 > enemy.x - enemy.w/2
+        && this.bulletArray[i].x - this.bulletArray[i].w/2 < enemy.x + enemy.w/2){
+          if(this.bulletArray[i].y + this.bulletArray[i].w/2 > enemy.y - enemy.h/2
+            && this.bulletArray[i].y - this.bulletArray[i].w/2 < enemy.y + enemy.h/2){
+              //remove bullet from array
+              this.bulletArray.splice(i, 1);
+              //diminish life of enemy
+              enemy.life -=2;
+              // console.log(enemy.life);
+          }
+      }
+    }
+  }
+}
+
+
+//handleEnemyCollision
+//
+//handle collision between player and enemy
+PlayerMobile.prototype.handleEnemyCollision = function(enemy){
+  //check for overlap
+  if(this.x + this.w/2 > enemy.x - enemy.w/2
+    && this.x - this.w/2 < enemy.x + enemy.w/2
+    &&this.y + this.w/2 > enemy.y - enemy.h/2
+    && this.y - this.w/2 < enemy.y + enemy.h/2){
+      //if was not touching the enemy in the previous frame
+      if(!this.touchingEnemy){
+        //diminish life of player
+        this.life -=8;
+
+        //play sound
+        playerHitSound.currentTime = 0;
+        playerHitSound.play();
+        //dissalow player to be hurt again by the same contact
+        this.touchingEnemy = true;
+      }
+  //whenever player not touching enemy anymore
+  }else{
+    //allow player to be hurn again
+    this.touchingEnemy = false;
+  }
+}
+
+//displayLifeBar()
+//
+//Displays amount of player's life on a life bar
+//and a picture of the player
+PlayerMobile.prototype.displayLifeBar = function(){
+  push();
+  fill(0,255,0);
+  var barLength = map(constrain(this.life, 0,100), 0,100, 0, width/2-150);
+  rect(90+barLength/2, 46, barLength, 20, 10 );
+  imageMode(CENTER);
+  image(playerFace, 46, 46);
+  pop();
 }
