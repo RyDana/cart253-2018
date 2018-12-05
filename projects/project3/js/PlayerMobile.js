@@ -41,7 +41,7 @@ function PlayerMobile(x,y) {
 //
 //Checks if player is looking up (up key pressed)
 PlayerMobile.prototype.handleInputUp = function(){
-  if(keyIsDown(this.upKey)){
+  if(this.upKeyPressed){
     this.lookingUp = true;
   } else{
     this.lookingUp = false;
@@ -392,7 +392,7 @@ PlayerMobile.prototype.shoot = function() {
   if(this.shootKeyPressed && this.shot === false){
     //create a new bullet and push it into the array
     this.bulletArray.push(new Bullet(this.x, this.y, this.facingRight,
-      keyIsDown(this.upKey),this.bulletSpeed, this.bulletSize, this.bulletColor));
+      this.upKeyPressed,this.bulletSpeed, this.bulletSize, this.bulletColor));
 
     //play sound
     playerBulletSound.currentTime = 0;

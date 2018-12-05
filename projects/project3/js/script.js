@@ -202,7 +202,7 @@ function setup() {
     enemyOne = new EnemyOne(width/4, height/2);
 
   }else{
-    canvas = createCanvas(1280,480);
+    canvas = createCanvas(800,480);
     //Create Player using Player constructor (for keyboard capabilities)
     player = new Player(width/2, height/2);
 
